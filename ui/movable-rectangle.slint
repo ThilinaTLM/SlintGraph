@@ -1,0 +1,41 @@
+export struct RectangleDimensions {
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
+export component MovableRectangle inherits Rectangle {
+    property <bool> moving;
+    property <length> offset-x;
+    property <length> offset-y;
+
+    out property <RectangleDimensions> rect-props: {
+        x: self.x,
+        y: self.y,
+        width: self.width,
+        height: self.height,
+    };
+
+    TouchArea {
+        x: 0;
+        y: 0;
+        width: parent.width;
+        height: parent.height;
+        pointer-event (event) => {
+            if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
+                root.offset-x = self.mouse-x;
+                root.offset-y = self.mouse-y;
+                root.moving = true;
+            } else if event.kind == PointerEventKind.up {
+                root.moving = false;
+            }
+        }
+        moved => {
+            if root.moving {
+                root.x = root.x + self.mouse-x - root.offset-x;
+                root.y = root.y + self.mouse-y - root.offset-y;
+            }
+        }
+    }
+}
