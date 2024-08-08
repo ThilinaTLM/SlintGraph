@@ -1,34 +1,54 @@
 import { RectangleDimensions } from "./movable-rectangle.slint";
 
-component RotatableArrowHead inherits Path {
+component RotatableArrowHead {
     in property <angle> angle: 0deg;
-    
-    pure function rotate-point(x: float, y: float) -> Point {
-        return {
-            x: (x * cos(angle) - y * sin(angle)) *1px,
-            y: (x * sin(angle) + y * cos(angle)) *1px
-        };
+    in property <float> size: 10;
+    in property <brush> color: black;
+    in property <float> arrow-push: 0.2;
+
+    pure function rotate-point-x(x: float, y: float) -> float {
+        return (x * cos(angle) - y * sin(angle));
     }
 
-    MoveTo {
-        x: rotate-point(0, 50).x / 1px;
-        y: rotate-point(0, 50).y / 1px;
+    pure function rotate-point-y(x: float, y: float) -> float {
+        return (x * sin(angle) + y * cos(angle));
     }
-    LineTo {
-        x: rotate-point(100, 0).x / 1px;
-        y: rotate-point(100, 0).y / 1px;
+
+    width: size * 1px;
+    height: size * 1px;
+
+    Path {
+        stroke: root.color;
+        stroke-width: 1px;
+        fill: root.color;
+        width: root.width;
+        height: root.height;
+        viewbox-height: root.height / 1px;
+        viewbox-width: root.width / 1px;
+
+        MoveTo {
+            x: 0;
+            y: 0;
+        }
+
+        LineTo {
+            x: rotate-point-x(parent.width / 1px, parent.height / 2px);
+            y: rotate-point-y(parent.width / 1px, parent.height / 2px);
+        }
+
+        LineTo {
+            x: rotate-point-x(parent.width / 1px * (1 - root.arrow-push), 0);
+            y: rotate-point-y(parent.width / 1px * (1 - root.arrow-push), 0);
+        }
+
+        LineTo {
+            x: rotate-point-x(parent.width / 1px, parent.height / -2px);
+            y: rotate-point-y(parent.width / 1px, parent.height / -2px);
+        }
+
+        Close { }
     }
-    LineTo {
-        x: rotate-point(70, 50).x / 1px;
-        y: rotate-point(70, 50).y / 1px;
-    }
-    LineTo {
-        x: rotate-point(100, 100).x / 1px;
-        y: rotate-point(100, 100).y / 1px;
-    }
-    Close {}
 }
-
 
 export component ArrowWrapEdge {
     in property <RectangleDimensions> from;
@@ -38,8 +58,8 @@ export component ArrowWrapEdge {
     in property <int> from-wrap-distance: wrap-distance;
     in property <int> to-wrap-distance: wrap-distance;
 
-    property <bool> direction-left: (from.x + from.width/2) < (to.x + to.width/2);
-    property <bool> direction-up: (from.y + from.height/2) < (to.y + to.height/2);
+    property <bool> direction-left: (from.x + from.width / 2) < (to.x + to.width / 2);
+    property <bool> direction-up: (from.y + from.height / 2) < (to.y + to.height / 2);
     property <bool> x-overlap: (from.x < to.x + to.width + 10px) && (to.x < from.x + from.width + 10px);
     property <bool> y-overlap: (from.y < to.y + to.height + 10px) && (to.y < from.y + from.height + 10px);
     property <bool> wrap-edge-around: x-overlap && !y-overlap;
@@ -49,10 +69,10 @@ export component ArrowWrapEdge {
     property <length> end-x: direction-left ? to.x : to.x + to.width;
     property <length> end-y: to.y + to.height / 2;
 
-    x: min(start-x, end-x) - arrow-size*4px - 10px;
-    y: min(start-y, end-y) - arrow-size*4px - 10px;
-    width: abs(end-x - start-x) + arrow-size*8px + 20px;
-    height: abs(end-y - start-y) + arrow-size*8px + 20px;
+    x: min(start-x, end-x) - arrow-size * 4px - 10px;
+    y: min(start-y, end-y) - arrow-size * 4px - 10px;
+    width: abs(end-x - start-x) + arrow-size * 8px + 20px;
+    height: abs(end-y - start-y) + arrow-size * 8px + 20px;
 
     edge := Path {
         width: root.width;
@@ -62,27 +82,21 @@ export component ArrowWrapEdge {
         stroke: blue;
         stroke-width: 1px;
         clip: false;
-    
         MoveTo {
             x: (root.start-x - root.x) / 1px;
             y: (root.start-y - root.y) / 1px;
         }
+
         LineTo {
-            x: (root.start-x - root.x) / 1px + (direction-left? from-wrap-distance: -from-wrap-distance);
+            x: (root.start-x - root.x) / 1px + (direction-left ? from-wrap-distance : -from-wrap-distance);
             y: (root.start-y - root.y) / 1px;
         }
+
         LineTo {
-            x: (root.start-x - root.x) / 1px + (direction-left? from-wrap-distance: -from-wrap-distance);
-            y: (root.start-y - root.y) / 1px + (wrap-edge-around? (direction-up? from.height: -from.height)/2px: 0);
+            x: (root.start-x - root.x) / 1px + (direction-left ? from-wrap-distance : -from-wrap-distance);
+            y: (root.start-y - root.y) / 1px + (wrap-edge-around ? (direction-up ? from.height : -from.height) / 2px : 0);
         }
-        LineTo {
-            x: (root.end-x - root.x) / 1px + (direction-left? -to-wrap-distance: to-wrap-distance);
-            y: (root.end-y - root.y) / 1px + (wrap-edge-around? (direction-up? -to.height: to.height)/2px: 0);
-        }
-        LineTo {
-            x: (root.end-x - root.x) / 1px + (direction-left? -to-wrap-distance: to-wrap-distance);
-            y: (root.end-y - root.y) / 1px;
-        }
+
         LineTo {
             x: (root.end-x - root.x) / 1px;
             y: (root.end-y - root.y) / 1px;
@@ -90,15 +104,10 @@ export component ArrowWrapEdge {
     }
 
     RotatableArrowHead {
-        width: arrow-size * 1px;
-        height: arrow-size * 1px;
-        stroke: edge.stroke;
-        stroke-width: edge.stroke-width;
-        fill: edge.stroke;
-
-        x: end-x - root.x - (direction-left? self.width: 0);
-        y: end-y - root.y - self.height / 2;
-        angle: (root.direction-left? 180deg: 0);
+        size: arrow-size;
+        color: blue;
+        x: root.end-x - root.x;
+        y: root.end-y - root.y;
+        angle: atan((root.end-y - root.start-y) / (root.end-x - root.start-x)) + 180deg * (direction-left ? 1 : -1);
     }
-    
 }
