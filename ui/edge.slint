@@ -50,9 +50,10 @@ component RotatableArrowHead {
     }
 }
 
-export component ArrowWrapEdge {
+export component SingleSideWrapArrowEdge {
     in property <RectangleDimensions> from;
     in property <RectangleDimensions> to;
+
     in property <int> arrow-size: 10;
     in property <int> wrap-distance: arrow-size + 2;
     in property <int> from-wrap-distance: wrap-distance;
@@ -82,6 +83,7 @@ export component ArrowWrapEdge {
         stroke: blue;
         stroke-width: 1px;
         clip: false;
+        
         MoveTo {
             x: (root.start-x - root.x) / 1px;
             y: (root.start-y - root.y) / 1px;
@@ -109,5 +111,71 @@ export component ArrowWrapEdge {
         x: root.end-x - root.x;
         y: root.end-y - root.y;
         angle: atan((root.end-y - root.start-y) / (root.end-x - root.start-x)) + 180deg * (direction-left ? 1 : -1);
+    }
+}
+
+
+export component DualSideWrapEdge {
+    in property <RectangleDimensions> from;
+    in property <RectangleDimensions> to;
+    
+    in property <int> wrap-distance: 10;
+    in property <int> from-wrap-distance: wrap-distance;
+    in property <int> to-wrap-distance: wrap-distance;
+
+    property <bool> direction-left: (from.x + from.width / 2) < (to.x + to.width / 2);
+    property <bool> direction-up: (from.y + from.height / 2) < (to.y + to.height / 2);
+    property <bool> x-overlap: (from.x < to.x + to.width + 10px) && (to.x < from.x + from.width + 10px);
+    property <bool> y-overlap: (from.y < to.y + to.height + 10px) && (to.y < from.y + from.height + 10px);
+    property <bool> wrap-edge-around: x-overlap && !y-overlap;
+
+    property <length> start-x: direction-left ? from.x + from.width : from.x;
+    property <length> start-y: from.y + from.height / 2;
+    property <length> end-x: direction-left ? to.x : to.x + to.width;
+    property <length> end-y: to.y + to.height / 2;
+
+    x: min(start-x, end-x) - wrap-distance * 4px - 10px;
+    y: min(start-y, end-y) - wrap-distance * 4px - 10px;
+    width: abs(end-x - start-x) + wrap-distance * 8px + 20px;
+    height: abs(end-y - start-y) + wrap-distance * 8px + 20px;
+
+    edge := Path {
+        width: root.width;
+        height: root.height;
+        viewbox-width: self.width / 1px;
+        viewbox-height: self.height / 1px;
+        stroke: blue;
+        stroke-width: 1px;
+        clip: false;
+        
+        MoveTo {
+            x: (root.start-x - root.x) / 1px;
+            y: (root.start-y - root.y) / 1px;
+        }
+
+        LineTo {
+            x: (root.start-x - root.x) / 1px + (direction-left ? from-wrap-distance : -from-wrap-distance);
+            y: (root.start-y - root.y) / 1px;
+        }
+
+        LineTo {
+            x: (root.start-x - root.x) / 1px + (direction-left ? from-wrap-distance : -from-wrap-distance);
+            y: (root.start-y - root.y) / 1px + (wrap-edge-around ? (direction-up ? from.height : -from.height) / 2px : 0);
+        }
+
+        LineTo {
+            x: (root.end-x - root.x) / 1px + (direction-left ? -to-wrap-distance : to-wrap-distance);
+            y: (root.end-y - root.y) / 1px + (wrap-edge-around ? (direction-up ? -to.height : to.height) / 2px : 0);
+        }
+
+        LineTo {
+            x: (root.end-x - root.x) / 1px + (direction-left ? -to-wrap-distance : to-wrap-distance);
+            y: (root.end-y - root.y) / 1px;
+        }
+
+        LineTo {
+            x: (root.end-x - root.x) / 1px;
+            y: (root.end-y - root.y) / 1px;
+        }
     }
 }

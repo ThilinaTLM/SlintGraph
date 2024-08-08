@@ -1,5 +1,5 @@
 import { MovableRectangle } from "./movable-rectangle.slint";
-import { ArrowWrapEdge } from "./edge.slint";
+import { DualSideWrapEdge } from "./edge.slint";
 
 export component SlintDemoWindow inherits Window {
     width: 800px;
@@ -31,10 +31,9 @@ export component SlintDemoWindow inherits Window {
         }
     }
 
-    ArrowWrapEdge {
+    DualSideWrapEdge {
         from: box1.rect-props;
         to: box2.rect-props;
-        arrow-size: 10;
-        from-wrap-distance: 5;
+        wrap-distance: 10;
     }
 }
