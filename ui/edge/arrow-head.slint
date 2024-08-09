@@ -1,0 +1,49 @@
+export component ArrowHead {
+    in property <angle> angle: 0deg;
+    in property <float> size: 10;
+    in property <brush> color: black;
+    in property <float> notch-size: 0.2;
+
+    pure function rotate-point-x(x: float, y: float) -> float {
+        return (x * cos(angle) - y * sin(angle));
+    }
+
+    pure function rotate-point-y(x: float, y: float) -> float {
+        return (x * sin(angle) + y * cos(angle));
+    }
+
+    width: size * 1px;
+    height: size * 1px;
+
+    Path {
+        stroke: root.color;
+        stroke-width: 1px;
+        fill: root.color;
+        width: root.width;
+        height: root.height;
+        viewbox-height: root.height / 1px;
+        viewbox-width: root.width / 1px;
+
+        MoveTo {
+            x: 0;
+            y: 0;
+        }
+
+        LineTo {
+            x: rotate-point-x(parent.width / 1px, parent.height / 2px);
+            y: rotate-point-y(parent.width / 1px, parent.height / 2px);
+        }
+
+        LineTo {
+            x: rotate-point-x(parent.width / 1px * (1 - root.notch-size), 0);
+            y: rotate-point-y(parent.width / 1px * (1 - root.notch-size), 0);
+        }
+
+        LineTo {
+            x: rotate-point-x(parent.width / 1px, parent.height / -2px);
+            y: rotate-point-y(parent.width / 1px, parent.height / -2px);
+        }
+
+        Close { }
+    }
+}

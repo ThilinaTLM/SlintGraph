@@ -1,0 +1,160 @@
+import { RectangleDimensions } from "../movable-rectangle.slint";
+import { ArrowHead } from "./arrow-head.slint";
+
+enum Zone {
+    left,
+    right,
+    top,
+    bottom
+}
+
+global Fn {
+    pure public function zoneTostring(zone: Zone) -> string {
+        if zone == Zone.left {
+            return "left";
+        } else if zone == Zone.right {
+            return "right";
+        } else if zone == Zone.top {
+            return "top";
+        } else if zone == Zone.bottom {
+            return "bottom";
+        } else {
+            return "left";
+        }
+    }
+    
+}
+
+
+export component BaseEdge {
+    in-out property <RectangleDimensions> from;
+    in-out property <RectangleDimensions> to;
+
+    out property <float> zone-x-ratio: (2 * (to.x - from.x) + (to.width - from.width)) / (to.width +from.width);
+    out property <float> zone-y-ratio: (2 * (to.y - from.y) + (to.height - from.height)) / (to.height + from.height);
+    out property <Zone> zone: {
+        if (zone-x-ratio > 1) && (zone-x-ratio > zone-y-ratio) {
+            return Zone.right;
+        } else if (zone-x-ratio < -1) && (zone-x-ratio < zone-y-ratio) {
+            return Zone.left;
+        } else if (zone-y-ratio > 1) && (zone-y-ratio > zone-x-ratio) {
+            return Zone.top;
+        } else if (zone-y-ratio < -1) && (zone-y-ratio < zone-x-ratio) {
+            return Zone.bottom;
+        } else {
+            return Zone.left;
+        }
+    }
+
+    out property <Zone> zone-x: {
+        if (zone-x-ratio > 1) {
+            return Zone.right;
+        } else if (zone-x-ratio < -1) {
+            return Zone.left;
+        } else {
+            return Zone.left;
+        }
+    }
+
+    out property <Zone> zone-y: {
+        if (zone-y-ratio > 1) {
+            return Zone.top;
+        } else if (zone-y-ratio < -1) {
+            return Zone.bottom;
+        } else {
+            return Zone.bottom;
+        }
+    }
+
+    @children
+}
+
+export component SingleSideWrapArrowEdge inherits BaseEdge {
+    in property <int> arrow-size: 10;
+    in property <int> wrap-distance: arrow-size + 2;
+    in property <int> from-wrap-distance: wrap-distance;
+    in property <int> to-wrap-distance: wrap-distance;
+
+    property <bool> x-overlap: (-1 < root.zone-x-ratio) && (root.zone-x-ratio < 1);
+    property <bool> y-overlap: (-1 < root.zone-y-ratio) && (root.zone-y-ratio < 1);
+    property <bool> wrap-edge-around: x-overlap && !y-overlap;
+
+    property <Point> start: {
+        return {
+            x: root.zone-x == Zone.left ? root.from.x : root.from.x + root.from.width,
+            y: root.from.y + root.from.height / 2
+        };
+    }
+    property <Point> end: {
+        if (root.zone == Zone.left) {
+            return {
+                x: root.to.x + root.to.width,
+                y: root.to.y + root.to.height / 2
+            };
+        } else if (root.zone == Zone.right) {
+            return {
+                x: root.to.x,
+                y: root.to.y + root.to.height / 2
+            };
+        } else if (root.zone == Zone.bottom) {
+            return {
+                x: root.to.x + root.to.width / 2,
+                y: root.to.y + root.to.height
+            };
+        } else {
+            return {
+                x: root.to.x + root.to.width / 2,
+                y: root.to.y
+            };
+        }
+    }
+
+    x: min(start.x, end.x) - arrow-size * 4px - 10px;
+    y: min(start.y, end.y) - arrow-size * 4px - 10px;
+    width: abs(end.x - start.x) + arrow-size * 8px + 20px;
+    height: abs(end.y - start.y) + arrow-size * 8px + 20px;
+
+    edge := Path {
+        width: root.width;
+        height: root.height;
+        viewbox-width: self.width / 1px;
+        viewbox-height: self.height / 1px;
+        stroke: blue;
+        stroke-width: 1px;
+        clip: false;
+
+        MoveTo {
+            x: (root.start.x - root.x) / 1px;
+            y: (root.start.y - root.y) / 1px;
+        }
+
+        LineTo {
+            x: (root.start.x - root.x) / 1px + (root.zone-x == Zone.left ? -from-wrap-distance : from-wrap-distance);
+            y: (root.start.y - root.y) / 1px;
+        }
+
+        LineTo {
+            x: (root.start.x - root.x) / 1px + (root.zone-x == Zone.left ? -from-wrap-distance : from-wrap-distance);
+            y: (root.start.y - root.y) / 1px + (wrap-edge-around ? (root.zone-y == Zone.top ? root.from.height : -root.from.height) / 2px : 0);
+        }
+
+        LineTo {
+            x: (root.end.x - root.x) / 1px;
+            y: (root.end.y - root.y) / 1px;
+        }
+    }
+
+    Text {
+        text: "\{round(root.zone-x-ratio*100)/100}, \{round(parent.zone-y-ratio*100)/100}";
+        // text: "\{Fn.zoneTostring(root.zone)}";
+    }
+
+    ArrowHead {
+        size: arrow-size;
+        color: blue;
+        x: root.end.x - root.x;
+        y: root.end.y - root.y;
+        angle: atan((root.end.y - root.start.y) / (root.end.x - root.start.x)) + (root.zone-x-ratio > -0.5? 180deg: 0);
+    }
+}
+
