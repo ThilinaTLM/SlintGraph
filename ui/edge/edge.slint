@@ -79,6 +79,10 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
     property <bool> y-overlap: (-1 < root.zone-y-ratio) && (root.zone-y-ratio < 1);
     property <bool> wrap-edge-around: x-overlap && !y-overlap;
 
+    pure function smooth-end(ratio: float, length: length, alpha: float) -> length {
+        return length * (1 - clamp(ratio * alpha + 0.5, 0.1, 0.9));
+    }
+
     property <Point> start: {
         return {
             x: root.zone-x == Zone.left ? root.from.x : root.from.x + root.from.width,
@@ -89,21 +93,21 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
         if (root.zone == Zone.left) {
             return {
                 x: root.to.x + root.to.width,
-                y: root.to.y + root.to.height / 2
+                y: root.to.y + smooth-end(root.zone-y-ratio, root.to.height, 0.2)
             };
         } else if (root.zone == Zone.right) {
             return {
                 x: root.to.x,
-                y: root.to.y + root.to.height / 2
+                y: root.to.y + smooth-end(root.zone-y-ratio, root.to.height, 0.2)
             };
         } else if (root.zone == Zone.bottom) {
             return {
-                x: root.to.x + root.to.width / 2,
+                x: root.to.x + smooth-end(root.zone-x-ratio, root.to.width, 0.2),
                 y: root.to.y + root.to.height
             };
         } else {
             return {
-                x: root.to.x + root.to.width / 2,
+                x: root.to.x + smooth-end(root.zone-x-ratio, root.to.width, 0.2),
                 y: root.to.y
             };
         }
