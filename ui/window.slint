@@ -1,39 +1,51 @@
 import { MovableRectangle } from "./movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
 
+struct UiNodeData {
+    id: string,
+    label: string,
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+    background: color,
+}
+
 export component SlintDemoWindow inherits Window {
     width: 800px;
     height: 600px;
 
-    box1 := MovableRectangle {
-        x: parent.width / 4 - 50px;
-        y: parent.height / 4 - 50px;
-        width: 100px;
-        height: 100px;
-        background: red;
+    in-out property <[UiNodeData]> nodes: [];
+    callback node-data-change();
+
+    for node[i] in nodes: MovableRectangle {
+        x: node.x;
+        y: node.y;
+        width: node.width;
+        height: node.height;
+        background: node.background;
 
         Text {
-            text: "1";
-            font-size: 50px;
+            text: node.label;
+            font-size: 30px;
+        }
+
+        on-change => {
+            root.nodes[i] = {
+                label: node.label,
+                x: self.dimentions.x,
+                y: self.dimentions.y,
+                width: node.width,
+                height: node.height,
+                background: node.background,
+            };
+            node-data-change();
         }
     }
 
-    box2 := MovableRectangle {
-        x: parent.width * 3 / 4 - 50px;
-        y: parent.height / 4 - 50px;
-        width: 100px;
-        height: 100px;
-        background: green;
-
-        Text {
-            text: "2";
-            font-size: 50px;
-        }
-    }
-
-    SingleSideWrapArrowEdge {
-        from: box1.rect-props;
-        to: box2.rect-props;
-        arrow-size: 10;
-    }
+    // SingleSideWrapArrowEdge {
+    //     from: box1.dimentions;
+    //     to: box2.dimentions;
+    //     arrow-size: 10;
+    // }
 }

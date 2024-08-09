@@ -9,13 +9,19 @@ export component MovableRectangle inherits Rectangle {
     property <bool> moving;
     property <length> offset-x;
     property <length> offset-y;
+    callback on-change();
 
-    out property <RectangleDimensions> rect-props: {
+    out property <RectangleDimensions> dimentions: {
         x: self.x,
         y: self.y,
         width: self.width,
         height: self.height,
     };
+
+    x: dimentions.x;
+    y: dimentions.y;
+    width: dimentions.width;
+    height: dimentions.height;
 
     TouchArea {
         x: 0;
@@ -35,6 +41,7 @@ export component MovableRectangle inherits Rectangle {
             if root.moving {
                 root.x = root.x + self.mouse-x - root.offset-x;
                 root.y = root.y + self.mouse-y - root.offset-y;
+                on-change();
             }
         }
     }
