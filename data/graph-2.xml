@@ -1,1 +1,48 @@
-<graph><nodes><node><id/><label>Node 1</label><x>323</x><y>408</y><width>80</width><height>40</height><background>#FF0000</background></node><node><id/><label>Node 2</label><x>258</x><y>222</y><width>100</width><height>60</height><background>#00FF00</background></node><node><id>3</id><label>Node 3</label><x>50</x><y>200</y><width>120</width><height>80</height><background>#0000FF</background></node><node><id>4</id><label>Node 4</label><x>300</x><y>100</y><width>90</width><height>50</height><background>#FFFF00</background></node></nodes></graph>
+<?xml version="1.0" encoding="UTF-8"?>
+<graph>
+    <nodes>
+        <node>
+            <id>1</id>
+            <label>N1</label>
+            <x>100</x>
+            <y>50</y>
+            <width>80</width>
+            <height>40</height>
+            <background>#FF0000</background>
+        </node>
+        <node>
+            <id>2</id>
+            <label>N2</label>
+            <x>200</x>
+            <y>150</y>
+            <width>100</width>
+            <height>60</height>
+            <background>#00FF00</background>
+        </node>
+        <node>
+            <id>3</id>
+            <label>N3</label>
+            <x>50</x>
+            <y>200</y>
+            <width>120</width>
+            <height>80</height>
+            <background>#0000FF</background>
+        </node>
+        <node>
+            <id>4</id>
+            <label>N4</label>
+            <x>300</x>
+            <y>100</y>
+            <width>90</width>
+            <height>50</height>
+            <background>#FFFF00</background>
+        </node>
+    </nodes>
+    <edges>
+        <edge>
+            <id>1</id>
+            <source>1</source>
+            <target>3</target>
+        </edge>
+    </edges>
+</graph>

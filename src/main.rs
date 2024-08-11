@@ -1,10 +1,10 @@
+mod graph;
+
+use std::rc::Rc;
+use graph::{Graph, Node};
+use slint::{Color, Model, VecModel};
 
 slint::include_modules!();
-
-use std::fs::File;
-use std::io::BufReader;
-use serde::{Serialize, Deserialize};
-use slint::{Color, Model};
 
 fn color_from_hex(hex: &str) -> Result<Color, Box<dyn std::error::Error>> {
     let hex = hex.trim_start_matches('#');
@@ -13,30 +13,6 @@ fn color_from_hex(hex: &str) -> Result<Color, Box<dyn std::error::Error>> {
     let g = ((rgb >> 8) & 0xFF) as u8;
     let b = (rgb & 0xFF) as u8;
     Ok(Color::from_rgb_u8(r, g, b))
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename = "graph")]
-pub struct Graph {
-    #[serde(rename = "nodes")]
-    pub nodes: Nodes,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Nodes {
-    #[serde(rename = "node")]
-    pub node: Vec<Node>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Node {
-    pub id: String,
-    pub label: String,
-    pub x: u32,
-    pub y: u32,
-    pub width: u32,
-    pub height: u32,
-    pub background: String,
 }
 
 impl From<Node> for UiNodeData {
@@ -67,38 +43,97 @@ impl Into<Node> for UiNodeData {
     }
 }
 
-fn parse_xml(file_path: &str) -> Result<Vec<Node>, Box<dyn std::error::Error>> {
-    let file = File::open(file_path)?;
-    let file = BufReader::new(file);
-
-    let graph: Graph = quick_xml::de::from_reader(file)?;
-    Ok(graph.nodes.node)
+struct UiController {
+    file_path: String,
+    ui: SlintDemoWindow,
+    ui_weak: slint::Weak<SlintDemoWindow>,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    
-    let ui = SlintDemoWindow::new()?;
-    let ui = std::rc::Rc::new(ui);
-    
-    let nodes = parse_xml("data/graph-2.xml")?;
-    let nodes: Vec<UiNodeData> = nodes.into_iter().map(UiNodeData::from).collect();
-    let nodes_model = std::rc::Rc::new(slint::VecModel::from(nodes));
-    ui.set_nodes(nodes_model.into());
+impl UiController {
+    fn new(file_path: String) -> Rc<Self> {
+        let ui = SlintDemoWindow::new().unwrap();
+        let controller = Rc::new(Self {
+            file_path,
+            ui_weak: ui.as_weak(),
+            ui,
+        });
 
-    let ui_handler = ui.clone();
-    ui.on_node_data_change(move || {
-        let nodes = ui_handler.get_nodes();
-        let nodes: Vec<Node> = nodes.iter().map(|node| node.clone().into()).collect();
-        let graph = Graph {
-            nodes: Nodes {
-                node: nodes,
-            },
-        };
-        let content = quick_xml::se::to_string(&graph).unwrap();
-        std::fs::write("data/graph-2.xml", content).unwrap();
-    });
+        controller.setup_handlers();
+        controller.load_data_from_file(&controller.file_path);
 
-    ui.run().unwrap();
+        controller
+    }
 
+    fn run(self: &Rc<Self>) {
+        let ui = self.ui_weak.upgrade().unwrap();
+        ui.run().unwrap();
+    }
+
+    fn setup_handlers(self: &Rc<Self>) {
+        let ui = self.ui_weak.upgrade().unwrap();
+        let graph_state = ui.global::<GraphState>();
+
+        let controller = self.clone();
+        graph_state.on_changed(move || {
+            controller.save_data_to_file(&controller.file_path);
+        });
+
+
+        let controller = self.clone();
+        graph_state.on_update_node(move |node| {
+            controller.on_update_node(&node);
+        });
+    }
+
+    fn on_update_node(&self, node: &UiNodeData) {
+        let ui = self.ui_weak.upgrade().unwrap();
+        let graph_state = ui.global::<GraphState>();
+        let nodes_model = graph_state.get_nodes();
+        let nodes = nodes_model.iter().map(|n| {
+            if n.id == node.id {
+                node.clone()
+            } else {
+                n.clone()
+            }
+        }).collect::<Vec<_>>();
+        let nodes_model = Rc::new(VecModel::from(nodes));
+        graph_state.set_nodes(nodes_model.into());
+        graph_state.invoke_changed();
+    }
+
+    fn load_data_from_file(&self, path: &str) {
+        let graph = Graph::from_xml(path).unwrap();
+        let ui_nodes: Vec<UiNodeData> = graph.nodes.node.into_iter().map(UiNodeData::from).collect();
+        // let ui_edges: Vec<UiEdgeData> = graph.edges.edge.into_iter().map().collect();
+
+        let ui_nodes_model = Rc::new(slint::VecModel::from(ui_nodes));
+        // let ui_edges_model = Rc::new(slint::VecModel::from(ui_edges));
+
+        let ui = self.ui_weak.upgrade().unwrap();
+        let graph_state = ui.global::<GraphState>();
+        graph_state.set_nodes(ui_nodes_model.into());
+        // graph_state.set_edges(ui_edges_model.into());
+    }
+
+    fn save_data_to_file(&self, path: &str) {
+        let ui = self.ui_weak.upgrade().unwrap();
+        let graph_state = ui.global::<GraphState>();
+
+        let nodes = graph_state.get_nodes();
+        let edges = graph_state.get_edges();
+
+        let graph_nodes = nodes.iter().map(|node| node.clone().into()).collect();
+        let graph_edges = edges.iter().map(|edge| edge.clone().into()).collect();
+
+        let graph = Graph::from_nodes_and_edges(graph_nodes, graph_edges);
+        graph.save_to_xml(&path).unwrap();
+    }
+}
+
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let ui = UiController::new("data/graph-2.xml".to_string());
+    ui.run();
     Ok(())
 }

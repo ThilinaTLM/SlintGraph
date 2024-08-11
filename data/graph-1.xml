@@ -38,33 +38,4 @@
       <background>#FFFF00</background>
     </node>
   </nodes>
-  <edges>
-    <edge>
-      <source>1</source>
-      <target>2</target>
-      <label>E1</label>
-      <width>2</width>
-      <color>#FF0000</color>
-    </edge>
-    <edge>
-      <source>2</source>
-      <target>3</target>
-      <label>E2</label>
-      <width>3</width>
-      <color>#00FF00</color>
-    </edge>
-    <edge>
-      <source>3</source>
-      <target>4</target>
-      <label>E3</label>
-      <width>4</width>
-      <color>#0000FF</color>
-    </edge>
-    <edge>
-      <source>4</source>
-      <target>1</target>
-      <label>E4</label>
-      <width>5</width>
-      <color>#FFFF00</color>
-    </edge>
 </graph>

@@ -1,6 +1,13 @@
 import { MovableRectangle } from "./movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
 
+struct UiDimention {
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
 struct UiNodeData {
     id: string,
     label: string,
@@ -11,14 +18,26 @@ struct UiNodeData {
     background: color,
 }
 
+struct UiEdgeData {
+    id: string,
+    source: UiDimention,
+    target: UiDimention,
+}
+
+export global GraphState {
+    in-out property <[UiNodeData]> nodes: [];
+    in-out property <[UiEdgeData]> edges: [];
+
+    callback update-node(UiNodeData);
+    callback update-edge(UiEdgeData);
+    callback changed();
+}
+
 export component SlintDemoWindow inherits Window {
     width: 800px;
     height: 600px;
 
-    in-out property <[UiNodeData]> nodes: [];
-    callback node-data-change();
-
-    for node[i] in nodes: MovableRectangle {
+    for node in GraphState.nodes: MovableRectangle {
         x: node.x;
         y: node.y;
         width: node.width;
@@ -27,25 +46,19 @@ export component SlintDemoWindow inherits Window {
 
         Text {
             text: node.label;
-            font-size: 30px;
+            font-size: 20px;
         }
 
         on-change => {
-            root.nodes[i] = {
+            GraphState.update-node({
+                id: node.id,
                 label: node.label,
                 x: self.dimentions.x,
                 y: self.dimentions.y,
                 width: node.width,
                 height: node.height,
                 background: node.background,
-            };
-            node-data-change();
+            });
         }
     }
-
-    // SingleSideWrapArrowEdge {
-    //     from: box1.dimentions;
-    //     to: box2.dimentions;
-    //     arrow-size: 10;
-    // }
 }
