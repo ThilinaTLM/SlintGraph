@@ -6,17 +6,17 @@ use std::io::BufReader;
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename = "graph")]
 pub struct Graph {
-    #[serde(rename = "nodes")]
-    pub nodes: Nodes,
-    #[serde(rename = "edges")]
-    pub edges: Edges,
+    #[serde(rename = "node")]
+    pub nodes: Vec<Node>,
+    #[serde(rename = "edge")]
+    pub edges: Vec<Edge>,
 }
 
 impl Graph {
     pub fn from_nodes_and_edges(nodes: Vec<Node>, edges: Vec<Edge>) -> Self {
         Graph {
-            nodes: Nodes { node: nodes },
-            edges: Edges { edge: edges },
+            nodes: nodes,
+            edges: edges,
         }
     }
 
@@ -28,7 +28,7 @@ impl Graph {
     }
 
     pub fn find_node(&self, id: &str) -> Option<&Node> {
-        self.nodes.node.iter().find(|n| n.id == id)
+        self.nodes.iter().find(|n| n.id == id)
     }
 
     pub fn save_to_xml(&self, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
@@ -42,12 +42,6 @@ impl Graph {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Nodes {
-    #[serde(rename = "node")]
-    pub node: Vec<Node>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 pub struct Node {
     pub id: String,
     pub label: String,
@@ -55,12 +49,6 @@ pub struct Node {
     pub y: f32,
     pub width: f32,
     pub height: f32,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Edges {
-    #[serde(rename = "edge")]
-    pub edge: Vec<Edge>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

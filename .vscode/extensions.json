@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "slint.slint"
+        "myml.vscode-markdown-plantuml-preview",
+        "esbenp.prettier-vscode",
+        "jebbs.plantuml"
     ]
 }

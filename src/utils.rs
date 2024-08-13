@@ -47,12 +47,12 @@ pub struct UiGraph {
 impl From<&Graph> for UiGraph {
 
     fn from(value: &Graph) -> Self {
-        let nodes: Vec<UiNodeData> = value.nodes.node.iter().map(UiNodeData::from).collect();
-        let edges: Vec<UiEdgeData> = value.edges.edge.iter().map(|edge| {
+        let nodes: Vec<UiNodeData> = value.nodes.iter().map(UiNodeData::from).collect();
+        let edges: Vec<UiEdgeData> = value.edges.iter().map(|edge| {
             let source_node = value.find_node(&edge.source).unwrap();
             let target_node = value.find_node(&edge.target).unwrap();
-            let source_index: i32 = value.nodes.node.iter().position(|n| n.id == edge.source).unwrap().try_into().unwrap();
-            let target_index: i32 = value.nodes.node.iter().position(|n| n.id == edge.target).unwrap().try_into().unwrap();
+            let source_index: i32 = value.nodes.iter().position(|n| n.id == edge.source).unwrap().try_into().unwrap();
+            let target_index: i32 = value.nodes.iter().position(|n| n.id == edge.target).unwrap().try_into().unwrap();
 
             UiEdgeData {
                 id: edge.id.clone().into(),
