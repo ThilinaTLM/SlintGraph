@@ -1,8 +1,13 @@
+import { ScrollView } from "std-widgets.slint";
+
 import { MovableRectangle } from "./shapes/movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
 import { UiNodeData, UiEdgeData, UiDimention } from "./types.slint";
 
-export global GraphState {
+export global AppState {
+    in property <length> initial-viewport-width;
+    in property <length> initial-viewport-height;
+
     in-out property <[UiNodeData]> nodes: [];
     in-out property <[UiEdgeData]> edges: [];
 
@@ -11,45 +16,53 @@ export global GraphState {
 }
 
 export component SlintDemoWindow inherits Window {
-    width: 800px;
-    height: 600px;
+    min-width: 800px;
+    min-height: 600px;
 
-    for node[i] in GraphState.nodes: MovableRectangle {
-        x: node.x;
-        y: node.y;
-        width: node.width;
-        height: node.height;
-        background: orange;
+    scroll := Flickable {
+        interactive: false;
 
-        Text {
-            text: node.label;
-            font-size: 20px;
+        for node[i] in AppState.nodes: MovableRectangle {
+            x: node.x;
+            y: node.y;
+            width: node.width;
+            height: node.height;
+            background: orange;
+
+            Text {
+                text: node.label;
+                font-size: 20px;
+            }
+
+            on-move(dim) => {
+                AppState.nodes[i].x = dim.x;
+                AppState.nodes[i].y = dim.y;
+                if (dim.x + dim.width > scroll.viewport-width) {
+                    scroll.viewport-width = dim.x + dim.width;
+                }
+                if (dim.y + dim.height > scroll.viewport-height) {
+                    scroll.viewport-height = dim.y + dim.height;
+                } 
+            }
+
+            on-move-end(dim) => {
+                AppState.save();
+            }
         }
 
-        on-change(dim) => {
-            GraphState.update-node({
-                id: node.id,
-                label: node.label,
-                x: dim.x,
-                y: dim.y,
-                width: dim.width,
-                height: dim.height,
-            });
+        for edge[j] in AppState.edges: SingleSideWrapArrowEdge {
+            from: {
+                x: AppState.nodes[edge.source-index].x,
+                y: AppState.nodes[edge.source-index].y,
+                width: AppState.nodes[edge.source-index].width,
+                height: AppState.nodes[edge.source-index].height,
+            };
+            to: {
+                x: AppState.nodes[edge.target-index].x,
+                y: AppState.nodes[edge.target-index].y,
+                width: AppState.nodes[edge.target-index].width,
+                height: AppState.nodes[edge.target-index].height,
+            };
         }
-    }
-
-    for edge[j] in GraphState.edges: SingleSideWrapArrowEdge {
-        from: {
-            x: edge.source-dim.x,
-            y: edge.source-dim.y,
-            width: edge.source-dim.width,
-            height: edge.source-dim.height,
-        };
-        to: {
-            x: edge.target-dim.x,
-            y: edge.target-dim.y,
-            width: edge.target-dim.width,
-            height: edge.target-dim.height,
-        };
     }
 }

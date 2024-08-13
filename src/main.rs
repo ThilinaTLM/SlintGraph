@@ -6,7 +6,7 @@ mod utils;
 use std::rc::Rc;
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use utils::{color_from_hex, UiEdgeData, UiNodeData, SlintDemoWindow, GraphState, UiDimention};
+use utils::{color_from_hex, AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData};
 
 struct UiController {
     file_path: String,
@@ -36,7 +36,7 @@ impl UiController {
 
     fn setup_handlers(self: &Rc<Self>) {
         let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<GraphState>();
+        let graph_state = ui.global::<AppState>();
 
         let controller = self.clone();
         graph_state.on_save(move || {
@@ -52,7 +52,7 @@ impl UiController {
     fn on_update_node(&self, node: &UiNodeData) {
         println!("Node updated: {:?}", node);
         let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<GraphState>();
+        let graph_state = ui.global::<AppState>();
         
         // update node
         let nodes_model = graph_state.get_nodes();
@@ -80,6 +80,8 @@ impl UiController {
                         height: node.height,
                     },
                     target_dim: edge.target_dim,
+                    source_index: edge.source_index,
+                    target_index: edge.target_index,
                 }
             } else if edge.target == node.id {
                 UiEdgeData {
@@ -93,6 +95,8 @@ impl UiController {
                         width: node.width,
                         height: node.height,
                     },
+                    source_index: edge.source_index,
+                    target_index: edge.target_index,
                 }
             } else {
                 edge.clone()
@@ -108,45 +112,22 @@ impl UiController {
         graph_state.invoke_save();
     }
 
-
-
     fn load_data_from_file(&self, path: &str) {
         let graph = Graph::from_xml(path).unwrap();
-        let ui_nodes: Vec<UiNodeData> = graph.nodes.node.iter().map(UiNodeData::from).collect();
-        let ui_edges: Vec<UiEdgeData> = graph.edges.edge.iter().map(|edge| {
-            let source_node = graph.find_node(&edge.source).unwrap();
-            let target_node = graph.find_node(&edge.target).unwrap();
-            UiEdgeData {
-                id: edge.id.clone().into(),
-                source: edge.source.clone().into(),
-                target: edge.target.clone().into(),
-                source_dim: UiDimention {
-                    x: source_node.x,
-                    y: source_node.y,
-                    width: source_node.width,
-                    height: source_node.height,
-                },
-                target_dim: UiDimention {
-                    x: target_node.x,
-                    y: target_node.y,
-                    width: target_node.width,
-                    height: target_node.height,
-                },
-            }
-        }).collect();
+        let ui_graph = UiGraph::from(&graph);
 
-        let ui_nodes_model = Rc::new(slint::VecModel::from(ui_nodes));
-        let ui_edges_model = Rc::new(slint::VecModel::from(ui_edges));
+        let ui_nodes_model = Rc::new(slint::VecModel::from(ui_graph.nodes));
+        let ui_edges_model = Rc::new(slint::VecModel::from(ui_graph.edges));
 
         let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<GraphState>();
+        let graph_state = ui.global::<AppState>();
         graph_state.set_nodes(ui_nodes_model.into());
         graph_state.set_edges(ui_edges_model.into());
     }
 
     fn save_data_to_file(&self, path: &str) {
         let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<GraphState>();
+        let graph_state = ui.global::<AppState>();
 
         let nodes = graph_state.get_nodes();
         let edges = graph_state.get_edges();

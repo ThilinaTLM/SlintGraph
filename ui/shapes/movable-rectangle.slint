@@ -4,19 +4,9 @@ export component MovableRectangle inherits Rectangle {
     property <bool> moving;
     property <length> offset-x;
     property <length> offset-y;
-    callback on-change(UiDimention);
 
-    out property <UiDimention> dimentions: {
-        x: self.x,
-        y: self.y,
-        width: self.width,
-        height: self.height,
-    };
-
-    x: dimentions.x;
-    y: dimentions.y;
-    width: dimentions.width;
-    height: dimentions.height;
+    callback on-move(UiDimention);
+    callback on-move-end(UiDimention);
 
     TouchArea {
         x: 0;
@@ -30,13 +20,24 @@ export component MovableRectangle inherits Rectangle {
                 root.moving = true;
             } else if event.kind == PointerEventKind.up {
                 root.moving = false;
-                on-change(root.dimentions);
+                on-move-end({
+                    x: root.x,
+                    y: root.y,
+                    width: root.width,
+                    height: root.height,
+                });
             }
         }
         moved => {
             if root.moving {
                 root.x = root.x + self.mouse-x - root.offset-x;
                 root.y = root.y + self.mouse-y - root.offset-y;
+                on-move({
+                    x: root.x,
+                    y: root.y,
+                    width: root.width,
+                    height: root.height,
+                });
             }
         }
     }

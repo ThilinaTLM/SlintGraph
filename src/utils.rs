@@ -38,3 +38,45 @@ impl Into<Node> for UiNodeData {
         }
     }
 }
+
+pub struct UiGraph {
+    pub nodes: Vec<UiNodeData>,
+    pub edges: Vec<UiEdgeData>,
+}
+
+impl From<&Graph> for UiGraph {
+
+    fn from(value: &Graph) -> Self {
+        let nodes: Vec<UiNodeData> = value.nodes.node.iter().map(UiNodeData::from).collect();
+        let edges: Vec<UiEdgeData> = value.edges.edge.iter().map(|edge| {
+            let source_node = value.find_node(&edge.source).unwrap();
+            let target_node = value.find_node(&edge.target).unwrap();
+            let source_index: i32 = value.nodes.node.iter().position(|n| n.id == edge.source).unwrap().try_into().unwrap();
+            let target_index: i32 = value.nodes.node.iter().position(|n| n.id == edge.target).unwrap().try_into().unwrap();
+
+            UiEdgeData {
+                id: edge.id.clone().into(),
+                source: edge.source.clone().into(),
+                target: edge.target.clone().into(),
+                source_dim: UiDimention {
+                    x: source_node.x,
+                    y: source_node.y,
+                    width: source_node.width,
+                    height: source_node.height,
+                },
+                target_dim: UiDimention {
+                    x: target_node.x,
+                    y: target_node.y,
+                    width: target_node.width,
+                    height: target_node.height,
+                },
+                source_index: source_index,
+                target_index: target_index,
+            }
+        }).collect();
+        UiGraph {
+            nodes,
+            edges,
+        }
+    }
+}
