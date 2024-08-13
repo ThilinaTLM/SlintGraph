@@ -32,8 +32,11 @@ impl Graph {
     }
 
     pub fn save_to_xml(&self, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
-        let content = quick_xml::se::to_string(self)?;
-        fs::write(file_path, content)?;
+        let mut buffer = String::new();
+        let mut ser = quick_xml::se::Serializer::new(&mut buffer);
+        ser.indent(' ', 2);
+        self.serialize(ser).unwrap();
+        fs::write(file_path, buffer)?;
         Ok(())
     }
 }

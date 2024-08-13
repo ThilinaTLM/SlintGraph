@@ -1,4 +1,4 @@
-import { MovableRectangle } from "./movable-rectangle.slint";
+import { MovableRectangle, RectangleDimensions } from "./movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
 
 struct UiDimention {
@@ -31,15 +31,14 @@ export global GraphState {
     in-out property <[UiEdgeData]> edges: [];
 
     callback update-node(UiNodeData);
-    callback update-edge(UiEdgeData);
-    callback changed();
+    callback save();
 }
 
 export component SlintDemoWindow inherits Window {
     width: 800px;
     height: 600px;
 
-    for node in GraphState.nodes: MovableRectangle {
+    for node[i] in GraphState.nodes: MovableRectangle {
         x: node.x;
         y: node.y;
         width: node.width;
@@ -51,20 +50,21 @@ export component SlintDemoWindow inherits Window {
             font-size: 20px;
         }
 
-        on-change => {
+        on-change(dim) => {
             GraphState.update-node({
                 id: node.id,
                 label: node.label,
-                x: self.dimentions.x,
-                y: self.dimentions.y,
-                width: node.width,
-                height: node.height,
+                x: dim.x,
+                y: dim.y,
+                width: dim.width,
+                height: dim.height,
                 background: node.background,
             });
+            // GraphState.changed();
         }
     }
 
-    for edge in GraphState.edges: SingleSideWrapArrowEdge {
+    for edge[j] in GraphState.edges: SingleSideWrapArrowEdge {
         from: {
             x: edge.source-dim.x,
             y: edge.source-dim.y,

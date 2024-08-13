@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 mod graph;
 
 use std::rc::Rc;
@@ -74,10 +76,9 @@ impl UiController {
         let graph_state = ui.global::<GraphState>();
 
         let controller = self.clone();
-        graph_state.on_changed(move || {
+        graph_state.on_save(move || {
             controller.save_data_to_file(&controller.file_path);
         });
-
 
         let controller = self.clone();
         graph_state.on_update_node(move |node| {
@@ -89,6 +90,8 @@ impl UiController {
         println!("Node updated: {:?}", node);
         let ui = self.ui_weak.upgrade().unwrap();
         let graph_state = ui.global::<GraphState>();
+        
+        // update node
         let nodes_model = graph_state.get_nodes();
         let nodes = nodes_model.iter().map(|n| {
             if n.id == node.id {
@@ -97,10 +100,52 @@ impl UiController {
                 n.clone()
             }
         }).collect::<Vec<_>>();
-        let nodes_model = Rc::new(VecModel::from(nodes));
+        let nodes_model: Rc<VecModel<UiNodeData>> = Rc::new(VecModel::from(nodes));
+
+        // update edges
+        let edges_model = graph_state.get_edges();
+        let edges = edges_model.iter().map(|edge| {
+            if edge.source == node.id {
+                UiEdgeData {
+                    id: edge.id.into(),
+                    source: edge.source.into(),
+                    target: edge.target.into(),
+                    source_dim: UiDimention {
+                        x: node.x,
+                        y: node.y,
+                        width: node.width,
+                        height: node.height,
+                    },
+                    target_dim: edge.target_dim,
+                }
+            } else if edge.target == node.id {
+                UiEdgeData {
+                    id: edge.id.into(),
+                    source: edge.source.into(),
+                    target: edge.target.into(),
+                    source_dim: edge.source_dim,
+                    target_dim: UiDimention {
+                        x: node.x,
+                        y: node.y,
+                        width: node.width,
+                        height: node.height,
+                    },
+                }
+            } else {
+                edge.clone()
+            }
+        }).collect::<Vec<_>>();
+        let edges_model = Rc::new(VecModel::from(edges));
+
+        // update graph state
         graph_state.set_nodes(nodes_model.into());
-        graph_state.invoke_changed();
+        graph_state.set_edges(edges_model.into());
+
+        // save
+        graph_state.invoke_save();
     }
+
+
 
     fn load_data_from_file(&self, path: &str) {
         let graph = Graph::from_xml(path).unwrap();
