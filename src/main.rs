@@ -1,7 +1,7 @@
 mod graph;
 
 use std::rc::Rc;
-use graph::{Graph, Node};
+use graph::{Edge, Graph, Node};
 use slint::{Color, Model, VecModel};
 
 slint::include_modules!();
@@ -15,11 +15,11 @@ fn color_from_hex(hex: &str) -> Result<Color, Box<dyn std::error::Error>> {
     Ok(Color::from_rgb_u8(r, g, b))
 }
 
-impl From<Node> for UiNodeData {
-    fn from(node: Node) -> Self {
+impl From<&Node> for UiNodeData {
+    fn from(node: &Node) -> Self {
         UiNodeData {
-            id: node.id.into(),
-            label: node.label.into(),
+            id: node.id.clone().into(),
+            label: node.label.clone().into(),
             x: node.x as f32,
             y: node.y as f32,
             width: node.width as f32,
@@ -34,10 +34,10 @@ impl Into<Node> for UiNodeData {
         Node {
             id: self.id.to_string(),
             label: self.label.to_string(),
-            x: self.x as u32,
-            y: self.y as u32,
-            width: self.width as u32,
-            height: self.height as u32,
+            x: self.x,
+            y: self.y,
+            width: self.width,
+            height: self.height,
             background: format!("#{:02X}{:02X}{:02X}", self.background.red(), self.background.green(), self.background.blue()),
         }
     }
@@ -86,6 +86,7 @@ impl UiController {
     }
 
     fn on_update_node(&self, node: &UiNodeData) {
+        println!("Node updated: {:?}", node);
         let ui = self.ui_weak.upgrade().unwrap();
         let graph_state = ui.global::<GraphState>();
         let nodes_model = graph_state.get_nodes();
@@ -103,16 +104,36 @@ impl UiController {
 
     fn load_data_from_file(&self, path: &str) {
         let graph = Graph::from_xml(path).unwrap();
-        let ui_nodes: Vec<UiNodeData> = graph.nodes.node.into_iter().map(UiNodeData::from).collect();
-        // let ui_edges: Vec<UiEdgeData> = graph.edges.edge.into_iter().map().collect();
+        let ui_nodes: Vec<UiNodeData> = graph.nodes.node.iter().map(UiNodeData::from).collect();
+        let ui_edges: Vec<UiEdgeData> = graph.edges.edge.iter().map(|edge| {
+            let source_node = graph.find_node(&edge.source).unwrap();
+            let target_node = graph.find_node(&edge.target).unwrap();
+            UiEdgeData {
+                id: edge.id.clone().into(),
+                source: edge.source.clone().into(),
+                target: edge.target.clone().into(),
+                source_dim: UiDimention {
+                    x: source_node.x,
+                    y: source_node.y,
+                    width: source_node.width,
+                    height: source_node.height,
+                },
+                target_dim: UiDimention {
+                    x: target_node.x,
+                    y: target_node.y,
+                    width: target_node.width,
+                    height: target_node.height,
+                },
+            }
+        }).collect();
 
         let ui_nodes_model = Rc::new(slint::VecModel::from(ui_nodes));
-        // let ui_edges_model = Rc::new(slint::VecModel::from(ui_edges));
+        let ui_edges_model = Rc::new(slint::VecModel::from(ui_edges));
 
         let ui = self.ui_weak.upgrade().unwrap();
         let graph_state = ui.global::<GraphState>();
         graph_state.set_nodes(ui_nodes_model.into());
-        // graph_state.set_edges(ui_edges_model.into());
+        graph_state.set_edges(ui_edges_model.into());
     }
 
     fn save_data_to_file(&self, path: &str) {
@@ -123,7 +144,11 @@ impl UiController {
         let edges = graph_state.get_edges();
 
         let graph_nodes = nodes.iter().map(|node| node.clone().into()).collect();
-        let graph_edges = edges.iter().map(|edge| edge.clone().into()).collect();
+        let graph_edges = edges.iter().map(|edge| Edge {
+            id: edge.id.into(),
+            source: edge.source.into(),
+            target: edge.target.into(),
+        }).collect();
 
         let graph = Graph::from_nodes_and_edges(graph_nodes, graph_edges);
         graph.save_to_xml(&path).unwrap();

@@ -20,8 +20,10 @@ struct UiNodeData {
 
 struct UiEdgeData {
     id: string,
-    source: UiDimention,
-    target: UiDimention,
+    source: string,
+    target: string,
+    source-dim: UiDimention,
+    target-dim: UiDimention,
 }
 
 export global GraphState {
@@ -60,5 +62,20 @@ export component SlintDemoWindow inherits Window {
                 background: node.background,
             });
         }
+    }
+
+    for edge in GraphState.edges: SingleSideWrapArrowEdge {
+        from: {
+            x: edge.source-dim.x,
+            y: edge.source-dim.y,
+            width: edge.source-dim.width,
+            height: edge.source-dim.height,
+        };
+        to: {
+            x: edge.target-dim.x,
+            y: edge.target-dim.y,
+            width: edge.target-dim.width,
+            height: edge.target-dim.height,
+        };
     }
 }
