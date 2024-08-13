@@ -1,12 +1,13 @@
 #![allow(unused)]
 
 mod graph;
-mod utils;
+mod ui_utils;
+mod xml_utils;
 
 use std::rc::Rc;
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use utils::{color_from_hex, AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData};
+use ui_utils::{color_from_hex, AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData};
 
 struct UiController {
     file_path: String,
