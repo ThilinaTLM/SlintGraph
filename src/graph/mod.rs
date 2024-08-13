@@ -55,7 +55,6 @@ pub struct Node {
     pub y: f32,
     pub width: f32,
     pub height: f32,
-    pub background: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

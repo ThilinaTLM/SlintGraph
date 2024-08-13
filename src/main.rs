@@ -1,49 +1,12 @@
 #![allow(unused)]
 
 mod graph;
+mod utils;
 
 use std::rc::Rc;
 use graph::{Edge, Graph, Node};
-use slint::{Color, Model, VecModel};
-
-slint::include_modules!();
-
-fn color_from_hex(hex: &str) -> Result<Color, Box<dyn std::error::Error>> {
-    let hex = hex.trim_start_matches('#');
-    let rgb = u32::from_str_radix(hex, 16)?;
-    let r = ((rgb >> 16) & 0xFF) as u8;
-    let g = ((rgb >> 8) & 0xFF) as u8;
-    let b = (rgb & 0xFF) as u8;
-    Ok(Color::from_rgb_u8(r, g, b))
-}
-
-impl From<&Node> for UiNodeData {
-    fn from(node: &Node) -> Self {
-        UiNodeData {
-            id: node.id.clone().into(),
-            label: node.label.clone().into(),
-            x: node.x as f32,
-            y: node.y as f32,
-            width: node.width as f32,
-            height: node.height as f32,
-            background: color_from_hex(&node.background).unwrap_or(Color::from_rgb_u8(0, 0, 0)),
-        }
-    }
-}
-
-impl Into<Node> for UiNodeData {
-    fn into(self) -> Node {
-        Node {
-            id: self.id.to_string(),
-            label: self.label.to_string(),
-            x: self.x,
-            y: self.y,
-            width: self.width,
-            height: self.height,
-            background: format!("#{:02X}{:02X}{:02X}", self.background.red(), self.background.green(), self.background.blue()),
-        }
-    }
-}
+use slint::{Color, ComponentHandle, Model, VecModel};
+use utils::{color_from_hex, UiEdgeData, UiNodeData, SlintDemoWindow, GraphState, UiDimention};
 
 struct UiController {
     file_path: String,
@@ -203,7 +166,7 @@ impl UiController {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let ui = UiController::new("data/graph-2.xml".to_string());
+    let ui = UiController::new("data/graph-1.xml".to_string());
     ui.run();
     Ok(())
 }

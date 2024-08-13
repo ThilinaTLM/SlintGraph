@@ -1,0 +1,24 @@
+
+export struct UiDimention {
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
+export struct UiNodeData {
+    id: string,
+    label: string,
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
+export struct UiEdgeData {
+    id: string,
+    source: string,
+    target: string,
+    source-dim: UiDimention,
+    target-dim: UiDimention,
+}

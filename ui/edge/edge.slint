@@ -1,4 +1,4 @@
-import { RectangleDimensions } from "../movable-rectangle.slint";
+import { UiDimention } from "../types.slint";
 import { ArrowHead } from "./arrow-head.slint";
 
 enum Zone {
@@ -27,8 +27,8 @@ global Fn {
 
 
 export component BaseEdge {
-    in-out property <RectangleDimensions> from;
-    in-out property <RectangleDimensions> to;
+    in-out property <UiDimention> from;
+    in-out property <UiDimention> to;
 
     out property <float> zone-x-ratio: (2 * (to.x - from.x) + (to.width - from.width)) / (to.width +from.width);
     out property <float> zone-y-ratio: (2 * (to.y - from.y) + (to.height - from.height)) / (to.height + from.height);
