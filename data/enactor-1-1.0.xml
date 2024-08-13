@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<core:process xmlns:core="http://www.enactor.com/core" xmlns:ns5="http://maven.apache.org/POM/4.0.0" xmlns:ns7="tools" xmlns:retail="http://www.enactor.com/retail" xmlns:sref="http://docs.oasis-open.org/wsbpel/2.0/serviceref" xmlns:tools="http://www.enactor.com/tools">
+    <core:processID>Jysk/Pos/Basket/RecalculateExistingDepositBasketItems</core:processID>
+    <core:version>1.0</core:version>
+    <core:name></core:name>
+    <core:defaultMessageBaseName></core:defaultMessageBaseName>
+    <core:firstStateID>State</core:firstStateID>
+    <core:className></core:className>
+    <core:uiHints>
+        <entry>
+            <key>com.enactor.tools.editor.process.style</key>
+            <value>2047</value>
+        </entry>
+        <entry>
+            <key>com.enactor.tools.editor.process.xloc</key>
+            <value>8</value>
+        </entry>
+        <entry>
+            <key>com.enactor.tools.editor.process.yloc</key>
+            <value>8</value>
+        </entry>
+    </core:uiHints>
+    <core:metaData>
+        <core:inputs>
+            <core:input required="true" name="enactor.mfc.TransactionHandler">
+                <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+            </core:input>
+        </core:inputs>
+        <stateDataTypes>
+            <stateDataType required="true" name="enactor.mfc.TransactionHandler">
+                <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+            </stateDataType>
+        </stateDataTypes>
+    </core:metaData>
+    <core:endProcessAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>Success</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UIEndProcessAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>1</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>1766</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>-4</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData/>
+        <core:comment>Process is complete, basket balance is zero.</core:comment>
+        <core:typeId>enactor.types.EndProcess</core:typeId>
+        <core:outcome>Success</core:outcome>
+        <core:defaultProcessId></core:defaultProcessId>
+    </core:endProcessAction>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>GetBasketFromHandlerAction</core:actionID>
+        <core:name>GetBasketFromHandlerAction</core:name>
+        <core:className>com.enactor.pos.packages.basket.processes.GetBasketFromHandlerAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>588</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>301</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.mfc.TransactionHandler">
+                    <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output name="enactor.mfc.Basket">
+                    <core:interfaceName>com.enactor.mfc.basket.IBasket</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CallGetOrderDetailsItem</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:executeProcessAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CallGetOrderDetailsItem</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UICallProcessAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>882</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>301</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.mfc.TransactionHandler">
+                    <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output required="false" name="enactor.mfc.OrderDetailsItem">
+                    <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                </core:output>
+                <core:output required="true" name="enactor.mfc.ErrorCode">
+                    <core:interfaceName>java.lang.String</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Fail"/>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.CallProcess</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>Success</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Fail</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CheckDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:executeProcessId>Pos/UnifiedCommerce/Order/GetOrderDetailsItem</core:executeProcessId>
+    </core:executeProcessAction>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>GetIteratorActionDeliveryOptions</core:actionID>
+        <core:name>GetIteratorAction</core:name>
+        <core:className>com.enactor.commonUI.iteration.actions.GetIteratorAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>1470</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>301</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.coreUI.Iterable">
+                    <core:interfaceName>java.lang.Object</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output name="enactor.coreUI.Iterator">
+                    <core:interfaceName>java.util.Iterator</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>IterateDeliveryOptions</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.commonUI.iteration.actions.IterateAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>1765</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>298</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.coreUI.Iterator">
+                    <core:interfaceName>java.util.Iterator</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output name="enactor.coreUI.IteratorItem">
+                    <core:interfaceName>java.lang.Object</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Completed"/>
+                <core:outcome name="Next"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.BasicAction</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CheckOrderDepositLinesExistAndOnlyContainsOneEntry</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Next</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>Success</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Completed</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>3</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CallUpdateBasket</core:toActionID>
+            <core:condition>(true == state.basketChanged) &amp;&amp; (state.basket.processingIncomplete == false)</core:condition>
+            <core:outcome>Completed</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:assignAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>SetDepositLine</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UIAssignAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>2047</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2010</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>546</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                    <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output required="true" name="enactor.customerOrders.retail.DeliveryOptionOrderDepositLine">
+                    <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IOrderDepositLine</core:interfaceName>
+                </core:output>
+                <core:output required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                    <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.Assign</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CompareDepositLineAndDeliveryOption</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:dataAssignment toExpression="deliveryOptionOrderDepositLine" fromExpression="deliveryOption.orderDepositLines[0]"/>
+        <core:dataAssignment toExpression="customerOrderDepositBasketItem" fromExpression="deliveryOptionOrderDepositLine.customerOrderDepositBasketItem"/>
+    </core:assignAction>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CompareDepositLineAndDeliveryOption</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UINullAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>3</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2249</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>546</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.NullAction</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>Assign</core:toActionID>
+            <core:condition>state.deliveryOption.deliveryOptionEffectiveNetValue != state.customerOrderDepositBasketItem.additionalDataMap["DEPOSIT_LINE_VALUE"]</core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CheckOrderDepositLinesExistAndOnlyContainsOneEntry</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UINullAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>3</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>1765</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>546</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.NullAction</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>SetDepositLine</core:toActionID>
+            <core:condition>size(state.deliveryOption.orderDepositLines) == 1</core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>ProcessDepositItem</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.pos.packages.basket.processes.ProcessTransactionItem</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>11</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2727</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>546</value>
+            </entry>
+        </core:uiHints>
+        <core:param value="class://com.enactor.mfc.basket.processors.NotAddItemBasketItemProcessor" name="enactor.mfc.TransactionItemProcessor">
+            <core:interfaceName>com.enactor.core.transaction.ITransactionItemProcessor</core:interfaceName>
+        </core:param>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.mfc.TransactionHandler">
+                    <core:interfaceName>com.enactor.core.transaction.ITransactionHandler</core:interfaceName>
+                </core:input>
+                <core:input required="true" name="enactor.mfc.TransactionItemProcessor">
+                    <core:interfaceName>com.enactor.core.transaction.ITransactionItemProcessor</core:interfaceName>
+                </core:input>
+                <core:input name="enactor.mfc.BasketItem">
+                    <core:interfaceName>com.enactor.mfc.basket.items.IBasketItem</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+                <core:outcome name="BasketChanged"/>
+                <core:outcome name="ItemAdded"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.BasicAction</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CallJyskSetDepositItemValue</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>BasketChanged</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CallJyskSetDepositItemValue</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>ItemAdded</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>3</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CallJyskSetDepositItemValue</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:assignAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>Assign</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UIAssignAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2488</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>546</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                    <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                </core:input>
+                <core:input required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                    <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                    <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.Assign</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>ProcessDepositItem</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:dataAssignment toExpression="customerOrderDepositBasketItem.depositValue" fromExpression="deliveryOption.deliveryOptionEffectiveNetValue"/>
+        <core:dataAssignment toExpression="customerOrderDepositBasketItem.netValue" fromExpression="deliveryOption.deliveryOptionEffectiveNetValue"/>
+        <core:dataAssignment toExpression="customerOrderDepositBasketItem.value" fromExpression="deliveryOption.deliveryOptionEffectiveNetValue"/>
+        <core:dataAssignment toExpression="customerOrderDepositBasketItem.effectiveNetValue" fromExpression="deliveryOption.deliveryOptionEffectiveNetValue"/>
+    </core:assignAction>
+    <core:executeProcessAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CallUpdateBasket</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UICallProcessAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>11</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2071</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>30</value>
+            </entry>
+        </core:uiHints>
+        <core:param value="true" name="enactor.mfc.BasketChanged">
+            <core:interfaceName>java.lang.Boolean</core:interfaceName>
+        </core:param>
+        <core:metaData>
+            <core:inputs>
+                <core:input name="enactor.mfc.BasketChanged">
+                    <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.CallProcess</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>Success</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:executeProcessId>Pos/Basket/UpdateBasket</core:executeProcessId>
+    </core:executeProcessAction>
+    <core:executeProcessAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CallJyskSetDepositItemValue</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UICallProcessAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>11</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2966</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>546</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="false" name="enactor.mfc.TransactionHandler">
+                    <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+                </core:input>
+                <core:input required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                    <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outcomes>
+                <core:outcome name="Fail"/>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.CallProcess</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>SetBasketChanged</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>SetBasketChanged</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Fail</core:outcome>
+        </core:outcomeLink>
+        <core:executeProcessId>Jysk/Pos/Order/JyskSetDepositItemValue</core:executeProcessId>
+    </core:executeProcessAction>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CheckDeliveryOptions</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UINullAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>3</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>1176</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>301</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.NullAction</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>GetIteratorActionDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>Success</core:toActionID>
+            <core:condition>isEmpty(state.orderDetailsItem.deliveryOptions) || size(state.orderDetailsItem.deliveryOptions) == 0</core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:assignAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>SetBasketChanged</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UIAssignAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2966</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>315</value>
+            </entry>
+        </core:uiHints>
+        <core:param value="true" name="enactor.mfc.BasketChanged">
+            <core:interfaceName>java.lang.Boolean</core:interfaceName>
+        </core:param>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="false" name="enactor.mfc.BasketChanged">
+                    <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output required="false" name="enactor.mfc.BasketChanged">
+                    <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.Assign</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>LookupReason</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:dataAssignment toExpression="basketChanged" fromExpression="basketChanged"/>
+    </core:assignAction>
+    <core:executeProcessAction>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>CallOneOrderDetailsAtTotalForReplace</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.coreUI.actions.UICallProcessAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2726</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>185</value>
+            </entry>
+        </core:uiHints>
+        <core:param value="REPLACE" name="enactor.mfc.DepositMode">
+            <core:interfaceName>java.lang.String</core:interfaceName>
+        </core:param>
+        <core:param value="true" name="enactor.mfc.UseExistingDepositReason">
+            <core:interfaceName>java.lang.Boolean</core:interfaceName>
+        </core:param>
+        <core:metaData>
+            <core:inputs>
+                <core:input required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                    <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                </core:input>
+                <core:input required="true" name="enactor.mfc.OrderDetailsItem">
+                    <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                </core:input>
+                <core:input required="false" name="enactor.mfc.UseExistingDepositReason">
+                    <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                </core:input>
+                <core:input required="false" name="enactor.mfc.DepositReason">
+                    <core:interfaceName>com.enactor.mfc.reason.IReason</core:interfaceName>
+                </core:input>
+                <core:input required="false" name="enactor.mfc.ForcedDepositValue">
+                    <core:interfaceName>java.lang.Long</core:interfaceName>
+                </core:input>
+                <core:input required="false" name="enactor.mfc.ResetDepositValueFixed">
+                    <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                </core:input>
+                <core:input required="true" name="enactor.mfc.DeliveryReference">
+                    <core:interfaceName>java.lang.String</core:interfaceName>
+                </core:input>
+                <core:input required="true" name="enactor.mfc.DepositMode">
+                    <core:interfaceName>java.lang.String</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output required="true" name="enactor.mfc.CustomerOrderDepositReason">
+                    <core:interfaceName>com.enactor.mfc.reason.ICustomerOrderDepositReason</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Cancel"/>
+                <core:outcome name="Fail"/>
+                <core:outcome name="Success"/>
+            </core:outcomes>
+        </core:metaData>
+        <core:typeId>enactor.types.CallProcess</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Cancel</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Fail</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>3</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:executeProcessId>Pos/Order/OneOrderDetailsAtTotal</core:executeProcessId>
+    </core:executeProcessAction>
+    <core:action>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:actionID>LookupReason</core:actionID>
+        <core:name></core:name>
+        <core:className>com.enactor.commonUI.entities.processes.LookupEntityLenientAction</core:className>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>27</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>2964</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>15</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <core:inputs>
+                <core:input name="enactor.coreUI.Key">
+                    <core:interfaceName>com.enactor.core.entities.IEntityKey</core:interfaceName>
+                </core:input>
+            </core:inputs>
+            <core:outputs>
+                <core:output name="enactor.coreUI.Entity">
+                    <core:interfaceName>com.enactor.core.entities.IEntity</core:interfaceName>
+                </core:output>
+                <core:output name="enactor.coreUI.Key">
+                    <core:interfaceName>com.enactor.core.entities.IEntityKey</core:interfaceName>
+                </core:output>
+            </core:outputs>
+            <core:outcomes>
+                <core:outcome name="Success"/>
+                <core:outcome name="InputEmpty"/>
+                <core:outcome name="NoSuchRecord"/>
+            </core:outcomes>
+            <core:sessionManagementType>MAKE_SESSION_IF_NO_CURRENT</core:sessionManagementType>
+        </core:metaData>
+        <core:typeId>enactor.types.BasicAction</core:typeId>
+        <core:outcomeLink>
+            <core:linkID>1</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>CallOneOrderDetailsAtTotalForReplace</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>Success</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>NoSuchRecord</core:outcome>
+        </core:outcomeLink>
+        <core:outcomeLink>
+            <core:linkID>3</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>IterateDeliveryOptions</core:toActionID>
+            <core:condition></core:condition>
+            <core:outcome>InputEmpty</core:outcome>
+        </core:outcomeLink>
+    </core:action>
+    <core:state>
+        <core:url></core:url>
+        <core:stateID>State</core:stateID>
+        <core:name></core:name>
+        <core:className></core:className>
+        <core:defaultNextStateID></core:defaultNextStateID>
+        <core:uiHints>
+            <entry>
+                <key>com.enactor.tools.editor.process.style</key>
+                <value>2047</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.xloc</key>
+                <value>294</value>
+            </entry>
+            <entry>
+                <key>com.enactor.tools.editor.process.yloc</key>
+                <value>301</value>
+            </entry>
+        </core:uiHints>
+        <core:metaData>
+            <handledEvents>
+                <handledEvent name="StateEntered"/>
+            </handledEvents>
+            <stateDataTypes>
+                <stateDataType required="false" name="enactor.mfc.Basket">
+                    <core:interfaceName>com.enactor.mfc.basket.IBasket</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                    <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="true" name="enactor.mfc.OrderDetailsItem">
+                    <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="false" name="enactor.coreUI.IteratorDeliveryOptions">
+                    <core:interfaceName>java.util.Iterator</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="true" name="enactor.customerOrders.retail.DeliveryOptionOrderDepositLine">
+                    <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IOrderDepositLine</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                    <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="false" name="enactor.mfc.BasketChanged">
+                    <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                </stateDataType>
+                <stateDataType required="true" name="enactor.mfc.DepositReason">
+                    <core:interfaceName>com.enactor.mfc.reason.IReason</core:interfaceName>
+                </stateDataType>
+            </stateDataTypes>
+        </core:metaData>
+        <core:typeId>enactor.types.BasicState</core:typeId>
+        <core:singleInstance>false</core:singleInstance>
+        <core:respondToViewEvents>false</core:respondToViewEvents>
+        <core:actionInputMappings>
+            <core:actionMapping>
+                <core:actionID>GetIteratorActionDeliveryOptions</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.OrderDetailsItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.coreUI.Iterable">
+                                <core:interfaceName>java.lang.Object</core:interfaceName>
+                            </core:targetDataType>
+                            <core:expression>orderDetailsItem.deliveryOptions</core:expression>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>IterateDeliveryOptions</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="false" name="enactor.coreUI.IteratorDeliveryOptions">
+                                <core:interfaceName>java.util.Iterator</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.coreUI.Iterator">
+                                <core:interfaceName>java.util.Iterator</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>ProcessDepositItem</core:actionID>
+                <core:mappings>
+                    <core:processMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.TransactionHandler">
+                                <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.mfc.TransactionHandler">
+                                <core:interfaceName>com.enactor.core.transaction.ITransactionHandler</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:processMappings>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                                <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType name="enactor.mfc.BasketItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IBasketItem</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>RaiseOrderDepositChangedEvent</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                                <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.mfc.BasketItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IBasketItem</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>CallJyskSetDepositItemValue</core:actionID>
+                <core:mappings>
+                    <core:processMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.TransactionHandler">
+                                <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="false" name="enactor.mfc.TransactionHandler">
+                                <core:interfaceName>com.enactor.mfc.retail.transaction.IRetailTransactionHandler</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:processMappings>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                                <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                                <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>CallOneOrderDetailsAtTotalForReplace</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.OrderDetailsItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.mfc.OrderDetailsItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:targetDataType required="false" name="enactor.mfc.ResetDepositValueFixed">
+                                <core:interfaceName>java.lang.Boolean</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                                <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.mfc.DeliveryReference">
+                                <core:interfaceName>java.lang.String</core:interfaceName>
+                            </core:targetDataType>
+                            <core:expression>deliveryOption.deliveryReference</core:expression>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                                <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                                <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                                <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="false" name="enactor.mfc.ForcedDepositValue">
+                                <core:interfaceName>java.lang.Long</core:interfaceName>
+                            </core:targetDataType>
+                            <core:expression>deliveryOption.deliveryOptionEffectiveNetValue</core:expression>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.DepositReason">
+                                <core:interfaceName>com.enactor.mfc.reason.IReason</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="false" name="enactor.mfc.DepositReason">
+                                <core:interfaceName>com.enactor.mfc.reason.IReason</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>LookupReason</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.customerOrders.retail.CustomerOrderDepositBasketItem">
+                                <core:interfaceName>com.enactor.customerOrders.retail.basket.items.ICustomerOrderDepositBasketItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType name="enactor.coreUI.Key">
+                                <core:interfaceName>com.enactor.core.entities.IEntityKey</core:interfaceName>
+                            </core:targetDataType>
+                            <core:expression>customerOrderDepositBasketItem.depositReasonKey</core:expression>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+        </core:actionInputMappings>
+        <core:actionOutputMappings>
+            <core:actionMapping>
+                <core:actionID>CallGetOrderDetailsItem</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="false" name="enactor.mfc.OrderDetailsItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="false" name="enactor.mfc.OrderDetailsItem">
+                                <core:interfaceName>com.enactor.mfc.basket.items.IOrderDetailsItem</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.ErrorCode">
+                                <core:interfaceName>java.lang.String</core:interfaceName>
+                            </core:sourceDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>GetIteratorActionDeliveryOptions</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType name="enactor.coreUI.Iterator">
+                                <core:interfaceName>java.util.Iterator</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="false" name="enactor.coreUI.IteratorDeliveryOptions">
+                                <core:interfaceName>java.util.Iterator</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>IterateDeliveryOptions</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType name="enactor.coreUI.IteratorItem">
+                                <core:interfaceName>java.lang.Object</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.customerOrders.retail.DeliveryOption">
+                                <core:interfaceName>com.enactor.customerOrders.retail.deliveryOption.IDeliveryOption</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>CallOneOrderDetailsAtTotalForReplace</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType required="true" name="enactor.mfc.CustomerOrderDepositReason">
+                                <core:interfaceName>com.enactor.mfc.reason.ICustomerOrderDepositReason</core:interfaceName>
+                            </core:sourceDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+            <core:actionMapping>
+                <core:actionID>LookupReason</core:actionID>
+                <core:mappings>
+                    <core:processMappings/>
+                    <core:stateMappings>
+                        <core:mappings>
+                            <core:sourceDataType name="enactor.coreUI.Key">
+                                <core:interfaceName>com.enactor.core.entities.IEntityKey</core:interfaceName>
+                            </core:sourceDataType>
+                        </core:mappings>
+                        <core:mappings>
+                            <core:sourceDataType name="enactor.coreUI.Entity">
+                                <core:interfaceName>com.enactor.core.entities.IEntity</core:interfaceName>
+                            </core:sourceDataType>
+                            <core:targetDataType required="true" name="enactor.mfc.DepositReason">
+                                <core:interfaceName>com.enactor.mfc.reason.IReason</core:interfaceName>
+                            </core:targetDataType>
+                        </core:mappings>
+                    </core:stateMappings>
+                </core:mappings>
+            </core:actionMapping>
+        </core:actionOutputMappings>
+        <core:eventLink>
+            <core:linkID>2</core:linkID>
+            <core:toStateID></core:toStateID>
+            <core:toActionID>GetBasketFromHandlerAction</core:toActionID>
+            <core:condition></core:condition>
+            <core:event>StateEntered</core:event>
+        </core:eventLink>
+    </core:state>
+    <core:stateTransitions/>
+</core:process>
