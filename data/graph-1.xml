@@ -2,32 +2,32 @@
   <node>
     <id>1</id>
     <label>N1</label>
-    <x>76</x>
-    <y>24</y>
+    <x>63</x>
+    <y>188</y>
     <width>100</width>
     <height>120</height>
   </node>
   <node>
     <id>2</id>
     <label>N2</label>
-    <x>327</x>
-    <y>231</y>
+    <x>600</x>
+    <y>194</y>
     <width>100</width>
     <height>140</height>
   </node>
   <node>
     <id>3</id>
     <label>N3</label>
-    <x>70</x>
-    <y>238</y>
+    <x>316</x>
+    <y>320</y>
     <width>100</width>
     <height>150</height>
   </node>
   <node>
     <id>4</id>
     <label>N4</label>
-    <x>276</x>
-    <y>31</y>
+    <x>294</x>
+    <y>113</y>
     <width>100</width>
     <height>130</height>
   </node>

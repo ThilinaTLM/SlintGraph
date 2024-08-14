@@ -1,5 +1,6 @@
 import { ScrollView } from "std-widgets.slint";
 
+import { Action } from "./shapes/action.slint";
 import { MovableRectangle } from "./shapes/movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
 import { UiNodeData, UiEdgeData, UiDimention } from "./types.slint";
@@ -19,49 +20,39 @@ export component SlintDemoWindow inherits Window {
     min-width: 800px;
     min-height: 600px;
 
-    scroll := Flickable {
-        interactive: false;
-
-        for node[i] in AppState.nodes: MovableRectangle {
-            x: node.x;
-            y: node.y;
-            width: node.width;
-            height: node.height;
-            background: orange;
-
-            Text {
-                text: node.label;
-                font-size: 20px;
-            }
-
-            on-move(dim) => {
-                AppState.nodes[i].x = dim.x;
-                AppState.nodes[i].y = dim.y;
-                if (dim.x + dim.width > scroll.viewport-width) {
-                    scroll.viewport-width = dim.x + dim.width;
-                }
-                if (dim.y + dim.height > scroll.viewport-height) {
-                    scroll.viewport-height = dim.y + dim.height;
-                } 
-            }
-
-            on-move-end(dim) => {
-                AppState.save();
-            }
+    scroll := ScrollView {
+        bg := Rectangle {
+            x: 0px;
+            y: 0px;
+            width: 100%;
+            height: 100%;
+            background: #e9e9e9;
         }
 
-        for edge[j] in AppState.edges: SingleSideWrapArrowEdge {
+        a1 := Action {
+            x: 100px;
+            y: 100px;
+            name: "Action 1";
+        }
+
+        a2 := Action {
+            x: 300px;
+            y: 200px;
+            name: "Action 2";
+        }
+
+        SingleSideWrapArrowEdge {
             from: {
-                x: AppState.nodes[edge.source-index].x,
-                y: AppState.nodes[edge.source-index].y,
-                width: AppState.nodes[edge.source-index].width,
-                height: AppState.nodes[edge.source-index].height,
+                x: a1.x,
+                y: a1.y,
+                width: a1.width,
+                height: a1.height,
             };
             to: {
-                x: AppState.nodes[edge.target-index].x,
-                y: AppState.nodes[edge.target-index].y,
-                width: AppState.nodes[edge.target-index].width,
-                height: AppState.nodes[edge.target-index].height,
+                x: a2.x,
+                y: a2.y,
+                width: a2.width,
+                height: a2.height,
             };
         }
     }
