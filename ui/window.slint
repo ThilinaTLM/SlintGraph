@@ -16,11 +16,12 @@ export global AppState {
     callback save();
 }
 
+
 export component SlintDemoWindow inherits Window {
     min-width: 800px;
     min-height: 600px;
 
-    scroll := ScrollView {
+    scroll := ScrollView { 
         bg := Rectangle {
             x: 0px;
             y: 0px;
@@ -30,7 +31,7 @@ export component SlintDemoWindow inherits Window {
         }
 
         a1 := Action {
-            x: 100px;
+            x: 50px;
             y: 100px;
             name: "Action 1";
         }
