@@ -49,22 +49,22 @@ pub struct Process {
     meta_data: MetaData,
     
     #[serde(rename = "action", default)]
-    actions: Vec<Action>,
+    pub actions: Vec<Action>,
 
     #[serde(rename = "endProcessAction", default)]
-    end_process_actions: Vec<Action>,
+    pub end_process_actions: Vec<Action>,
 
     #[serde(rename = "executeProcessAction", default)]
-    execute_process_actions: Vec<Action>,
+    pub execute_process_actions: Vec<Action>,
 
     #[serde(rename = "assignAction", default)]
-    assign_actions: Vec<Action>,
+    pub ssign_actions: Vec<Action>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct UiHints {
     #[serde(rename = "entry", default)]
-    entries: Vec<Entry>,
+    pub entries: Vec<Entry>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -72,6 +72,53 @@ pub struct Entry {
     key: String,
     value: String,
 }
+
+const UI_HINT_ENTRY_KEY_STYLE: &str = "com.enactor.tools.editor.process.style";
+const UI_HINT_ENTRY_KEY_XLOC: &str = "com.enactor.tools.editor.process.xloc";
+const UI_HINT_ENTRY_KEY_YLOC: &str = "com.enactor.tools.editor.process.yloc";
+
+impl UiHints {
+    pub fn get_entry(&self, key: &str) -> Option<&Entry> {
+        self.entries.iter().find(|entry| entry.key == key)
+    }
+
+    pub fn set_entry(&mut self, key: &str, value: &str) {
+        if let Some(entry) = self.entries.iter_mut().find(|e| e.key == key) {
+            entry.value = value.to_string();
+        } else {
+            self.entries.push(Entry {
+                key: key.to_string(),
+                value: value.to_string(),
+            });
+        }
+    }
+
+    pub fn get_style(&self) -> Option<&String> {
+        self.get_entry(UI_HINT_ENTRY_KEY_STYLE).map(|entry| &entry.value)
+    }
+
+    pub fn get_xloc(&self) -> Option<&String> {
+        self.get_entry(UI_HINT_ENTRY_KEY_XLOC).map(|entry| &entry.value)
+    }
+
+    pub fn get_yloc(&self) -> Option<&String> {
+        self.get_entry(UI_HINT_ENTRY_KEY_YLOC).map(|entry| &entry.value)
+    }
+
+    pub fn set_style(&mut self, style: &str) {
+        self.set_entry(UI_HINT_ENTRY_KEY_STYLE, style);
+    }
+
+    pub fn set_xloc(&mut self, xloc: &str) {
+        self.set_entry(UI_HINT_ENTRY_KEY_XLOC, xloc);
+    }
+
+    pub fn set_yloc(&mut self, yloc: &str) {
+        self.set_entry(UI_HINT_ENTRY_KEY_YLOC, yloc);
+    }
+}
+
+
 
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct MetaData {
@@ -126,16 +173,16 @@ pub struct Action {
     default_next_state_id: Option<String>,
 
     #[serde(rename = "actionID")]
-    action_id: String,
+    pub action_id: String,
 
     #[serde(rename = "name")]
-    name: String,
+    pub name: String,
 
     #[serde(rename = "className")]
     class_name: String,
 
     #[serde(rename = "uiHints")]
-    ui_hints: UiHints,
+    pub ui_hints: UiHints,
 
     #[serde(rename = "metaData")]
     meta_data: MetaData,

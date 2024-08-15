@@ -4,10 +4,11 @@ mod graph;
 mod ui_utils;
 mod xml_utils;
 
-use std::rc::Rc;
+use std::{path::PrefixComponent, rc::Rc};
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use ui_utils::{color_from_hex, AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData};
+use ui_utils::{color_from_hex, AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData, UiProcessExt};
+use xml_utils::Process;
 
 struct UiController {
     file_path: String,
@@ -37,15 +38,15 @@ impl UiController {
 
     fn setup_handlers(self: &Rc<Self>) {
         let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<AppState>();
+        let app_state = ui.global::<AppState>();
 
         let controller = self.clone();
-        graph_state.on_save(move || {
+        app_state.on_save(move || {
             controller.save_data_to_file(&controller.file_path);
         });
 
         let controller = self.clone();
-        graph_state.on_update_node(move |node| {
+        app_state.on_update_node(move |node| {
             controller.on_update_node(&node);
         });
     }
@@ -114,16 +115,23 @@ impl UiController {
     }
 
     fn load_data_from_file(&self, path: &str) {
-        let graph = Graph::from_xml(path).unwrap();
-        let ui_graph = UiGraph::from(&graph);
+        let process = Process::from_xml_file(path).unwrap();
+        let ui_actions = process.get_ui_actions();
+        
+        println!("{:#?}", ui_actions);
 
-        let ui_nodes_model = Rc::new(slint::VecModel::from(ui_graph.nodes));
-        let ui_edges_model = Rc::new(slint::VecModel::from(ui_graph.edges));
+        // process ui actions
+        let (max_x, max_y) = ui_actions.iter().fold((0f32, 0f32), |(max_x, max_y), action| {
+            (f32::max(max_x, action.x), f32::max(max_y, action.y))
+        });
+        let ui_actions_model = Rc::new(VecModel::from(ui_actions));
 
+        
         let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<AppState>();
-        graph_state.set_nodes(ui_nodes_model.into());
-        graph_state.set_edges(ui_edges_model.into());
+        let app_state = ui.global::<AppState>();
+        app_state.set_actions(ui_actions_model.into());
+        app_state.set_viewport_width(max_x);
+        app_state.set_viewport_height(max_y);
     }
 
     fn save_data_to_file(&self, path: &str) {
@@ -148,7 +156,7 @@ impl UiController {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let ui = UiController::new("data/graph-1.xml".to_string());
+    let ui = UiController::new("data/enactor-1-1.0.xml".to_string());
     ui.run();
     Ok(())
 }

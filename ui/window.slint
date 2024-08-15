@@ -3,17 +3,56 @@ import { ScrollView } from "std-widgets.slint";
 import { Action } from "./shapes/action.slint";
 import { MovableRectangle } from "./shapes/movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
-import { UiNodeData, UiEdgeData, UiDimention } from "./types.slint";
+import { UiNodeData, UiEdgeData, UiDimention, UiAction } from "./types.slint";
 
 export global AppState {
-    in property <length> initial-viewport-width;
-    in property <length> initial-viewport-height;
+    in-out property <length> viewport-width;
+    in-out property <length> viewport-height;
 
     in-out property <[UiNodeData]> nodes: [];
     in-out property <[UiEdgeData]> edges: [];
 
+    in-out property <[UiAction]> actions: [];
+
     callback update-node(UiNodeData);
     callback save();
+}
+
+component App {
+
+    ScrollView {
+        viewport-width: AppState.viewport-width + 500px;
+        viewport-height: AppState.viewport-height + 500px;
+
+        Rectangle {
+            x: 0;
+            y: 0;
+            width: parent.viewport-width;
+            height: parent.viewport-height;
+            background: #e9e9e9;
+        }
+
+        for action[i] in AppState.actions: Action {
+            x: action.x;
+            y: action.y;
+            name: action.id;
+        }
+
+        // SingleSideWrapArrowEdge {
+        //     from: {
+        //         x: a1.x,
+        //         y: a1.y,
+        //         width: a1.width,
+        //         height: a1.height,
+        //     };
+        //     to: {
+        //         x: a2.x,
+        //         y: a2.y,
+        //         width: a2.width,
+        //         height: a2.height,
+        //     };
+        // }
+    }
 }
 
 
@@ -21,40 +60,9 @@ export component SlintDemoWindow inherits Window {
     min-width: 800px;
     min-height: 600px;
 
-    scroll := ScrollView { 
-        bg := Rectangle {
-            x: 0px;
-            y: 0px;
-            width: 100%;
-            height: 100%;
-            background: #e9e9e9;
-        }
-
-        a1 := Action {
-            x: 50px;
-            y: 100px;
-            name: "Action 1";
-        }
-
-        a2 := Action {
-            x: 300px;
-            y: 200px;
-            name: "Action 2";
-        }
-
-        SingleSideWrapArrowEdge {
-            from: {
-                x: a1.x,
-                y: a1.y,
-                width: a1.width,
-                height: a1.height,
-            };
-            to: {
-                x: a2.x,
-                y: a2.y,
-                width: a2.width,
-                height: a2.height,
-            };
-        }
+    App {
+        width: root.width;
+        height: root.height;
     }
+
 }

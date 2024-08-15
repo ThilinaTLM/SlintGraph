@@ -1,6 +1,6 @@
 use slint::Color;
 
-use crate::graph::{Graph, Node};
+use crate::{graph::{Graph, Node}, xml_utils::Process};
 
 slint::include_modules!();
 
@@ -78,5 +78,23 @@ impl From<&Graph> for UiGraph {
             nodes,
             edges,
         }
+    }
+}
+
+pub trait UiProcessExt {
+    fn get_ui_actions(&self) -> Vec<UiAction>;
+}
+
+impl UiProcessExt for Process {
+    fn get_ui_actions(&self) -> Vec<UiAction> {
+        self.actions.iter().enumerate().map(|(index, action)| {
+            UiAction {
+                index: index.try_into().unwrap(),
+                id: action.action_id.clone().into(),
+                name: action.name.clone().into(),
+                x: action.ui_hints.get_xloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
+                y: action.ui_hints.get_yloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
+            }
+        }).collect()
     }
 }
