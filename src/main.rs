@@ -116,7 +116,7 @@ impl UiController {
 
     fn load_data_from_file(&self, path: &str) {
         let process = Process::from_xml_file(path).unwrap();
-        let ui_actions = process.get_ui_actions();
+        let ui_actions = process.get_all_ui_actions();
         
         println!("{:#?}", ui_actions);
 

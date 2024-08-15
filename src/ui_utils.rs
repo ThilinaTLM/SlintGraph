@@ -82,12 +82,12 @@ impl From<&Graph> for UiGraph {
 }
 
 pub trait UiProcessExt {
-    fn get_ui_actions(&self) -> Vec<UiAction>;
+    fn get_all_ui_actions(&self) -> Vec<UiAction>;
 }
 
 impl UiProcessExt for Process {
-    fn get_ui_actions(&self) -> Vec<UiAction> {
-        self.actions.iter().enumerate().map(|(index, action)| {
+    fn get_all_ui_actions(&self) -> Vec<UiAction> {
+        self.get_all_actions().iter().enumerate().map(|(index, action)| {
             UiAction {
                 index: index.try_into().unwrap(),
                 id: action.action_id.clone().into(),

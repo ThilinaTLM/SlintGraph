@@ -58,7 +58,47 @@ pub struct Process {
     pub execute_process_actions: Vec<Action>,
 
     #[serde(rename = "assignAction", default)]
-    pub ssign_actions: Vec<Action>,
+    pub assign_actions: Vec<Action>,
+}
+
+impl Process {
+    
+    pub fn from_xml_string(xml_string: &str) -> Result<Process, Box<dyn std::error::Error>> {
+        let document: Process = quick_xml::de::from_str(xml_string)?;
+        Ok(document)
+    }
+
+    pub fn from_xml_file(file_path: &str) -> Result<Process, Box<dyn std::error::Error>> {
+        let file = std::fs::File::open(file_path)?;
+        let file = std::io::BufReader::new(file);
+        let document: Process = quick_xml::de::from_reader(file)?;
+        Ok(document)
+    }
+
+    pub fn to_xml_string(&self) -> Result<String, Box<dyn std::error::Error>> {
+        let xml_string = quick_xml::se::to_string(self)?;
+        Ok(xml_string)
+    }
+
+    pub fn to_xml_file(&self, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let mut buffer = String::new();
+        let mut ser = quick_xml::se::Serializer::new(&mut buffer);
+        ser.indent(' ', 2);
+        self.serialize(ser).unwrap();
+        std::fs::write(file_path, buffer)?;
+        Ok(())
+    }
+
+    pub fn get_all_actions(&self) -> Vec<&Action> {
+        let mut all_actions = Vec::new();
+        
+        all_actions.extend(self.actions.iter());
+        all_actions.extend(self.end_process_actions.iter());
+        all_actions.extend(self.execute_process_actions.iter());
+        all_actions.extend(self.assign_actions.iter());
+        
+        all_actions
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
@@ -233,36 +273,6 @@ pub struct OutcomeLink {
 
     #[serde(rename = "outcome")]
     outcome: String,
-}
-
-impl Process {
-    
-    pub fn from_xml_string(xml_string: &str) -> Result<Process, Box<dyn std::error::Error>> {
-        let document: Process = quick_xml::de::from_str(xml_string)?;
-        Ok(document)
-    }
-
-    pub fn from_xml_file(file_path: &str) -> Result<Process, Box<dyn std::error::Error>> {
-        let file = std::fs::File::open(file_path)?;
-        let file = std::io::BufReader::new(file);
-        let document: Process = quick_xml::de::from_reader(file)?;
-        Ok(document)
-    }
-
-    pub fn to_xml_string(&self) -> Result<String, Box<dyn std::error::Error>> {
-        let xml_string = quick_xml::se::to_string(self)?;
-        Ok(xml_string)
-    }
-
-    pub fn to_xml_file(&self, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
-        let mut buffer = String::new();
-        let mut ser = quick_xml::se::Serializer::new(&mut buffer);
-        ser.indent(' ', 2);
-        self.serialize(ser).unwrap();
-        std::fs::write(file_path, buffer)?;
-        Ok(())
-    }
-    
 }
 
 #[cfg(test)]
