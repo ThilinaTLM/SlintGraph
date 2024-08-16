@@ -1,9 +1,9 @@
-import {UiDimention} from "../types.slint";
+import { UiDimention, UiElementItem } from "../types.slint";
 import { VerticalBox } from "std-widgets.slint";
 
 component ActionSection {
     in property <string> header;
-    in property <[string]> items;
+    in property <[UiElementItem]> items;
 
     VerticalLayout {
         
@@ -48,14 +48,14 @@ component ActionSection {
 
         VerticalLayout {
             padding-left: 5px;
-            for outcome in root.items: Rectangle {
+            for item in root.items: Rectangle {
                 height: 20px;
                 background: #ffffff;            
     
                 VerticalBox {
                     height: parent.height;
                     Text {
-                        text: outcome;
+                        text: item.simple_name;
                         color: #7c7c7c;
                         font-size: 12px;
                         font-weight: 600;
@@ -78,9 +78,9 @@ export component Action {
     callback on-move-end(UiDimention);
 
     in property <string> name;
-    in property <[string]> outcomes;
-    in property <[string]> inputs;
-    in property <[string]> outputs;
+    in property <[UiElementItem]> outcomes;
+    in property <[UiElementItem]> inputs;
+    in property <[UiElementItem]> outputs;
 
     TouchArea {
         width: parent.width;

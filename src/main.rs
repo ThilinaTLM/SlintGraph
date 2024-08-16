@@ -7,7 +7,7 @@ mod xml_utils;
 use std::{path::PrefixComponent, rc::Rc};
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use ui_utils::{color_from_hex, AppState, ProcessUiAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData, UiProcessExt};
+use ui_utils::{AppState, ProcessUiAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData};
 use xml_utils::Process;
 
 struct UiController {
@@ -139,21 +139,7 @@ impl UiController {
     }
 
     fn save_data_to_file(&self, path: &str) {
-        let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<AppState>();
-
-        let nodes = graph_state.get_nodes();
-        let edges = graph_state.get_edges();
-
-        let graph_nodes = nodes.iter().map(|node| node.clone().into()).collect();
-        let graph_edges = edges.iter().map(|edge| Edge {
-            id: edge.id.into(),
-            source: edge.source.into(),
-            target: edge.target.into(),
-        }).collect();
-
-        let graph = Graph::from_nodes_and_edges(graph_nodes, graph_edges);
-        graph.save_to_xml(&path).unwrap();
+        todo!();    
     }
 }
 

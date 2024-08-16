@@ -33,14 +33,21 @@ export enum UiElementType {
     State
 }
 
+export struct UiElementItem {
+    name: string,
+    simple_name: string,
+    unused: bool,
+    required: bool,
+}
+
 export struct UiAction {
     id: string,
     name: string,
     x: length,
     y: length,
-    outcomes: [string],
-    inputs: [string],
-    outputs: [string],
+    outcomes: [UiElementItem],
+    inputs: [UiElementItem],
+    outputs: [UiElementItem],
 }
 
 export struct UiLink {
