@@ -117,8 +117,6 @@ impl UiController {
     fn load_data_from_file(&self, path: &str) {
         let process = Process::from_xml_file(path).unwrap();
         let ui_actions = process.get_all_ui_actions();
-        
-        println!("{:#?}", ui_actions);
 
         // process ui actions
         let (max_x, max_y) = ui_actions.iter().fold((0f32, 0f32), |(max_x, max_y), action| {
@@ -126,6 +124,7 @@ impl UiController {
         });
         let ui_actions_model = Rc::new(VecModel::from(ui_actions));
 
+        // process ui action links
         
         let ui = self.ui_weak.upgrade().unwrap();
         let app_state = ui.global::<AppState>();

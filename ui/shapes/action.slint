@@ -6,43 +6,6 @@ component ActionSection {
     in property <[string]> items;
 
     VerticalLayout {
-        Rectangle {
-            height: 20px;
-            background: #ffffff;            
-    
-            VerticalLayout {
-                VerticalBox {
-                    height: parent.height;
-                    Text {
-                        text: root.header;
-                        color: #222222;
-                        font-size: 12px;
-                        font-weight: 600;
-                        vertical-alignment: top;
-                        horizontal-alignment: left;
-                    }
-                }
-            }
-        }
-        VerticalLayout {
-            padding-left: 5px;
-            for outcome in root.items: Rectangle {
-                height: 20px;
-                background: #ffffff;            
-    
-                VerticalBox {
-                    height: parent.height;
-                    Text {
-                        text: outcome;
-                        color: #7c7c7c;
-                        font-size: 12px;
-                        font-weight: 600;
-                        vertical-alignment: center;
-                        horizontal-alignment: left;
-                    }
-                }
-            }
-        }
         
         HorizontalLayout {
             padding-left: 5px;
@@ -63,8 +26,47 @@ component ActionSection {
                 }
             }
         }
-    }
+
+        Rectangle {
+            height: 20px;
+            background: #ffffff;            
     
+            VerticalLayout {
+                VerticalBox {
+                    height: parent.height;
+                    Text {
+                        text: root.header;
+                        color: #222222;
+                        font-size: 12px;
+                        font-weight: 600;
+                        vertical-alignment: top;
+                        horizontal-alignment: left;
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            padding-left: 5px;
+            for outcome in root.items: Rectangle {
+                height: 20px;
+                background: #ffffff;            
+    
+                VerticalBox {
+                    height: parent.height;
+                    Text {
+                        text: outcome;
+                        color: #7c7c7c;
+                        font-size: 12px;
+                        font-weight: 600;
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 export component Action {
@@ -133,8 +135,21 @@ export component Action {
             border-radius: 2px;
 
             Text {
-                text: root.name;
+                text: "Action";
                 color: white;
+                font-size: 12px;
+                font-weight: 600;
+                vertical-alignment: center;
+                horizontal-alignment: center;
+            }
+        }
+
+        Rectangle {
+            height: 20px;
+
+            Text {
+                text: root.name;
+                color: #222222;
                 font-size: 12px;
                 font-weight: 600;
                 vertical-alignment: center;

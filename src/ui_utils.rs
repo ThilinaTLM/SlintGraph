@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use slint::{Color, VecModel};
 
-use crate::{graph::{Graph, Node}, xml_utils::Process};
+use crate::{graph::{Graph, Node}, xml_utils::{Action, Process}};
 
 slint::include_modules!();
 
@@ -85,6 +85,7 @@ impl From<&Graph> for UiGraph {
 
 pub trait UiProcessExt {
     fn get_all_ui_actions(&self) -> Vec<UiAction>;
+    fn get_ui_links(&self, actions: &Vec<Action>) -> Vec<UiLink>;
 }
 
 impl UiProcessExt for Process {
@@ -110,5 +111,9 @@ impl UiProcessExt for Process {
                 outcomes: outcomes_model.into(),
             }
         }).collect()
+    }
+
+    fn get_ui_links(&self, actions: &Vec<Action>) -> Vec<UiLink> {
+        todo!()
     }
 }
