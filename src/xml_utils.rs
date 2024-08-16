@@ -47,6 +47,9 @@ pub struct Process {
     
     #[serde(rename = "metaData", default)]
     meta_data: MetaData,
+
+    #[serde(rename = "state", default)]
+    pub states: Vec<State>,
     
     #[serde(rename = "action", default)]
     pub actions: Vec<Action>,
@@ -175,6 +178,47 @@ pub struct MetaData {
     state_data_types: StateDataTypes,
 }
 
+impl MetaData {
+    pub fn get_inputs_as_strings(&self) -> Vec<String> {
+        self.inputs
+            .as_ref()
+            .map(|inputs| {
+                inputs
+                    .inputs
+                    .iter()
+                    .map(|input| input.name.clone())
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    pub fn get_outputs_as_strings(&self) -> Vec<String> {
+        self.outputs
+            .as_ref()
+            .map(|outputs| {
+                outputs
+                    .outputs
+                    .iter()
+                    .map(|output| output.name.clone())
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    pub fn get_outcomes_as_strings(&self) -> Vec<String> {
+        self.outcomes
+            .as_ref()
+            .map(|outcomes| {
+                outcomes
+                    .outcomes
+                    .iter()
+                    .map(|outcome| outcome.name.clone())
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct Inputs {
     #[serde(rename = "input", default)]
@@ -199,7 +243,7 @@ pub struct StateDataTypes {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct StateDataType {
-    #[serde(rename = "@required")]
+    #[serde(rename = "@required", default)]
     required: bool,
     #[serde(rename = "@name")]
     name: String,
@@ -225,7 +269,7 @@ pub struct Action {
     pub ui_hints: UiHints,
 
     #[serde(rename = "metaData")]
-    meta_data: MetaData,
+    pub meta_data: MetaData,
 
     #[serde(rename = "outcomeLink", default)]
     outcome_link: Vec<OutcomeLink>,
@@ -273,6 +317,147 @@ pub struct OutcomeLink {
 
     #[serde(rename = "outcome")]
     outcome: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct State {
+    #[serde(rename = "url")]
+    url: String,
+
+    #[serde(rename = "stateID")]
+    state_id: String,
+
+    #[serde(rename = "name")]
+    name: String,
+
+    #[serde(rename = "className")]
+    class_name: String,
+
+    #[serde(rename = "defaultNextStateID")]
+    default_next_state_id: Option<String>,
+
+    #[serde(rename = "uiHints")]
+    ui_hints: UiHints,
+
+    #[serde(rename = "metaData")]
+    meta_data: StateMetaData,
+
+    #[serde(rename = "typeId")]
+    type_id: String,
+
+    #[serde(rename = "singleInstance")]
+    single_instance: bool,
+
+    #[serde(rename = "respondToViewEvents")]
+    respond_to_view_events: bool,
+
+    #[serde(rename = "actionInputMappings")]
+    action_input_mappings: ActionMappings,
+
+    #[serde(rename = "actionOutputMappings")]
+    action_output_mappings: ActionMappings,
+
+    #[serde(rename = "eventLink")]
+    event_links: Vec<EventLink>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct StateMetaData {
+    #[serde(rename = "handledEvents")]
+    handled_events: HandledEvents,
+
+    #[serde(rename = "stateDataTypes")]
+    state_data_types: StateDataTypes,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct HandledEvents {
+    #[serde(rename = "handledEvent")]
+    events: Vec<HandledEvent>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct HandledEvent {
+    #[serde(rename = "@name")]
+    name: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ActionMappings {
+    #[serde(rename = "actionMapping")]
+    mappings: Vec<ActionMapping>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ActionMapping {
+    #[serde(rename = "actionID")]
+    action_id: String,
+
+    #[serde(rename = "mappings")]
+    mappings: Mappings,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Mappings {
+    #[serde(rename = "processMappings")]
+    process_mappings: ProcessMappings,
+
+    #[serde(rename = "stateMappings")]
+    state_mappings: StateMappings,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ProcessMappings {
+    #[serde(rename = "mappings", default)]
+    mappings: Vec<Mapping>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct StateMappings {
+    #[serde(rename = "mappings")]
+    mappings: Vec<Mapping>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Mapping {
+    #[serde(rename = "sourceDataType")]
+    source_data_type: Option<DataType>,
+
+    #[serde(rename = "targetDataType")]
+    target_data_type: Option<DataType>,
+
+    #[serde(rename = "expression", default)]
+    expression: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct DataType {
+    #[serde(rename = "@required", default)]
+    required: bool,
+
+    #[serde(rename = "@name")]
+    name: String,
+
+    #[serde(rename = "interfaceName")]
+    interface_name: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct EventLink {
+    #[serde(rename = "linkID")]
+    link_id: String,
+
+    #[serde(rename = "toStateID")]
+    to_state_id: Option<String>,
+
+    #[serde(rename = "toActionID")]
+    to_action_id: String,
+
+    #[serde(rename = "condition")]
+    condition: Option<String>,
+
+    #[serde(rename = "event")]
+    event: String,
 }
 
 #[cfg(test)]

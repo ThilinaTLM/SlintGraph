@@ -1,4 +1,6 @@
-use slint::Color;
+use std::rc::Rc;
+
+use slint::{Color, VecModel};
 
 use crate::{graph::{Graph, Node}, xml_utils::Process};
 
@@ -88,12 +90,24 @@ pub trait UiProcessExt {
 impl UiProcessExt for Process {
     fn get_all_ui_actions(&self) -> Vec<UiAction> {
         self.get_all_actions().iter().enumerate().map(|(index, action)| {
+
+            let ui_actions: Vec<slint::SharedString> = action.meta_data.get_inputs_as_strings().into_iter().map(|s| s.into()).collect();
+            let ui_outputs: Vec<slint::SharedString> = action.meta_data.get_outputs_as_strings().into_iter().map(|s| s.into()).collect();
+            let ui_outcomes: Vec<slint::SharedString> = action.meta_data.get_outcomes_as_strings().into_iter().map(|s| s.into()).collect();
+
+            let inputs_model = Rc::new(VecModel::from(ui_actions));
+            let outputs_model = Rc::new(VecModel::from(ui_outputs));
+            let outcomes_model = Rc::new(VecModel::from(ui_outcomes));
+
             UiAction {
-                index: index.try_into().unwrap(),
+                index: index.try_into().expect("Index should fit into UiAction index type"),
                 id: action.action_id.clone().into(),
                 name: action.name.clone().into(),
                 x: action.ui_hints.get_xloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
                 y: action.ui_hints.get_yloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
+                inputs: inputs_model.into(),
+                outputs: outputs_model.into(),
+                outcomes: outcomes_model.into(),
             }
         }).collect()
     }

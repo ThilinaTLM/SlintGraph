@@ -1,4 +1,71 @@
 import {UiDimention} from "../types.slint";
+import { VerticalBox } from "std-widgets.slint";
+
+component ActionSection {
+    in property <string> header;
+    in property <[string]> items;
+
+    VerticalLayout {
+        Rectangle {
+            height: 20px;
+            background: #ffffff;            
+    
+            VerticalLayout {
+                VerticalBox {
+                    height: parent.height;
+                    Text {
+                        text: root.header;
+                        color: #222222;
+                        font-size: 12px;
+                        font-weight: 600;
+                        vertical-alignment: top;
+                        horizontal-alignment: left;
+                    }
+                }
+            }
+        }
+        VerticalLayout {
+            padding-left: 5px;
+            for outcome in root.items: Rectangle {
+                height: 20px;
+                background: #ffffff;            
+    
+                VerticalBox {
+                    height: parent.height;
+                    Text {
+                        text: outcome;
+                        color: #7c7c7c;
+                        font-size: 12px;
+                        font-weight: 600;
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+                    }
+                }
+            }
+        }
+        
+        HorizontalLayout {
+            padding-left: 5px;
+            padding-right: 5px;
+            Path {
+                height: 20px;
+                stroke: #c5c5c5;
+                stroke-width: 1px;
+    
+                MoveTo {
+                    x: 0;
+                    y: 0;
+                }
+    
+                LineTo {
+                    x: 100;
+                    y: 0;
+                }
+            }
+        }
+    }
+    
+}
 
 export component Action {
     property <bool> moving;
@@ -9,6 +76,9 @@ export component Action {
     callback on-move-end(UiDimention);
 
     in property <string> name;
+    in property <[string]> outcomes;
+    in property <[string]> inputs;
+    in property <[string]> outputs;
 
     TouchArea {
         width: parent.width;
@@ -44,15 +114,18 @@ export component Action {
         }
     }
 
-    background := Rectangle {
-        background: green;
-        border-color: #7c7c7c;
+    // border
+    Rectangle {
+        background: white;
+        border-color: #25d434;
         border-width: 1px;
         width: child.width + 2px;
         height: child.height + 2px;
     }
 
     child := VerticalLayout {
+        padding-bottom: 10px;
+
         Rectangle {
             height: 20px;
             min-width: 200px;
@@ -69,9 +142,19 @@ export component Action {
             }
         }
 
-        Rectangle {
-            height: 250px;
-            background: #ffffff;
+        ActionSection {
+            header: "Outcomes";
+            items: root.outcomes;
+        }
+
+        ActionSection {
+            header: "Inputs";
+            items: root.inputs;
+        }
+
+        ActionSection {
+            header: "Outputs";
+            items: root.outputs;
         }
     }
     
