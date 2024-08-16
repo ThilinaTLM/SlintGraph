@@ -7,7 +7,7 @@ mod xml_utils;
 use std::{path::PrefixComponent, rc::Rc};
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use ui_utils::{AppState, ProcessUiAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData};
+use ui_utils::{AppState, UiProcessAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData};
 use xml_utils::Process;
 
 struct UiController {
@@ -116,7 +116,7 @@ impl UiController {
 
     fn load_data_from_file(&self, path: &str) {
         let process = Process::from_xml_file(path).unwrap();
-        let process_ui_adapter = ProcessUiAdapter::new(process);
+        let process_ui_adapter = UiProcessAdapter::new(process);
 
         let ui_actions = process_ui_adapter.ui_actions;
         let ui_links = process_ui_adapter.ui_links;

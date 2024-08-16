@@ -1,6 +1,20 @@
 import { UiDimention, UiElementItem } from "../types.slint";
 import { VerticalBox } from "std-widgets.slint";
 
+export global ActionUtils {
+    public pure function calculate-action-height(
+        outcomes-count: int,
+        inputs-count: int,
+        outputs-count: int
+    ) -> length {
+        return 60px
+            + (3 * 20px)
+            + (outcomes-count * 20px)
+            + (inputs-count * 20px)
+            + (outputs-count * 20px);
+    }
+}
+
 component ActionSection {
     in property <string> header;
     in property <[UiElementItem]> items;

@@ -6,7 +6,7 @@ use crate::{graph::{Graph, Node}, xml_utils::{Action, Process}};
 
 slint::include_modules!();
 
-pub struct ProcessUiAdapter {
+pub struct UiProcessAdapter {
     pub process: Process,
     pub ui_actions: Vec<UiAction>,
     pub ui_links: Vec<UiLink>,
@@ -30,7 +30,7 @@ fn get_simple_name(qualified_name: &str) -> String {
         .to_string()
 }
 
-impl ProcessUiAdapter {
+impl UiProcessAdapter {
     pub fn new(process: Process) -> Self {
         let all_actions = process.get_all_actions();
 
