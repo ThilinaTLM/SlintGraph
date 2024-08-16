@@ -42,6 +42,21 @@ component App {
             outcomes: action.outcomes;
         }
 
+        for link[i] in AppState.links: SingleSideWrapArrowEdge {
+            from: {
+                x: AppState.actions[link.source_index].x,
+                y: AppState.actions[link.source_index].y,
+                width: 200px,
+                height: 20px,
+            };
+            to: {
+                x: AppState.actions[link.target_index].x,
+                y: AppState.actions[link.target_index].y,
+                width: 200px,
+                height: 20px,
+            };
+        }
+
         // SingleSideWrapArrowEdge {
         //     from: {
         //         x: a1.x,

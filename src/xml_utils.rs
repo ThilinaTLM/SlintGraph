@@ -272,7 +272,7 @@ pub struct Action {
     pub meta_data: MetaData,
 
     #[serde(rename = "outcomeLink", default)]
-    outcome_link: Vec<OutcomeLink>,
+    pub outcome_links: Vec<OutcomeLink>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -304,19 +304,19 @@ pub struct Outcome {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct OutcomeLink {
     #[serde(rename = "linkID")]
-    link_id: String,
+    pub link_id: String,
 
     #[serde(rename = "toStateID")]
-    to_state_id: Option<String>,
+    pub to_state_id: Option<String>,
 
     #[serde(rename = "toActionID")]
-    to_action_id: String,
+    pub to_action_id: String,
 
     #[serde(rename = "condition")]
-    condition: Option<String>,
+    pub condition: Option<String>,
 
     #[serde(rename = "outcome")]
-    outcome: String,
+    pub outcome: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

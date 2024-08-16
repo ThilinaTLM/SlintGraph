@@ -28,8 +28,12 @@ export struct UiEdgeData {
 
 // -----------------------------
 
+export enum UiElementType {
+    Action,
+    State
+}
+
 export struct UiAction {
-    index: int,
     id: string,
     name: string,
     x: length,
@@ -40,10 +44,11 @@ export struct UiAction {
 }
 
 export struct UiLink {
-    index: int,
     id: string,
-    source: string,
-    target: string,
+    source_type: UiElementType,
+    source_id: string,
     source_index: int,
+    target_type: UiElementType,
+    target_id: string,
     target_index: int,
 }

@@ -7,7 +7,7 @@ mod xml_utils;
 use std::{path::PrefixComponent, rc::Rc};
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use ui_utils::{color_from_hex, AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData, UiProcessExt};
+use ui_utils::{color_from_hex, AppState, ProcessUiAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiGraph, UiNodeData, UiProcessExt};
 use xml_utils::Process;
 
 struct UiController {
@@ -116,7 +116,10 @@ impl UiController {
 
     fn load_data_from_file(&self, path: &str) {
         let process = Process::from_xml_file(path).unwrap();
-        let ui_actions = process.get_all_ui_actions();
+        let process_ui_adapter = ProcessUiAdapter::new(process);
+
+        let ui_actions = process_ui_adapter.ui_actions;
+        let ui_links = process_ui_adapter.ui_links;
 
         // process ui actions
         let (max_x, max_y) = ui_actions.iter().fold((0f32, 0f32), |(max_x, max_y), action| {
@@ -125,12 +128,14 @@ impl UiController {
         let ui_actions_model = Rc::new(VecModel::from(ui_actions));
 
         // process ui action links
+        let ui_links_model = Rc::new(VecModel::from(ui_links));
         
         let ui = self.ui_weak.upgrade().unwrap();
         let app_state = ui.global::<AppState>();
-        app_state.set_actions(ui_actions_model.into());
         app_state.set_viewport_width(max_x);
         app_state.set_viewport_height(max_y);
+        app_state.set_actions(ui_actions_model.into());
+        app_state.set_links(ui_links_model.into());
     }
 
     fn save_data_to_file(&self, path: &str) {
