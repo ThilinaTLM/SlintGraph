@@ -4,6 +4,7 @@ import { Action, ActionUtils } from "./shapes/action.slint";
 import { MovableRectangle } from "./shapes/movable-rectangle.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
 import { UiNodeData, UiEdgeData, UiDimention, UiAction, UiLink } from "./types.slint";
+import { FnUtils } from "./utils.slint";
 
 export global AppState {
     in-out property <length> viewport-width;
@@ -40,6 +41,11 @@ component App {
             inputs: action.inputs;
             outputs: action.outputs;
             outcomes: action.outcomes;
+
+            on-move => {
+                AppState.actions[i].x = self.x;
+                AppState.actions[i].y = self.y;
+            }
         }
 
         for link[i] in AppState.links: SingleSideWrapArrowEdge {
@@ -47,13 +53,21 @@ component App {
                 x: AppState.actions[link.source_index].x,
                 y: AppState.actions[link.source_index].y,
                 width: 200px,
-                height: 20px,
+                height: ActionUtils.calculate-action-height(
+                    AppState.actions[link.source_index].outcomes.length,
+                    AppState.actions[link.source_index].inputs.length,
+                    AppState.actions[link.source_index].outputs.length
+                ),
             };
             to: {
                 x: AppState.actions[link.target_index].x,
                 y: AppState.actions[link.target_index].y,
                 width: 200px,
-                height: 20px,
+                height: ActionUtils.calculate-action-height(
+                    AppState.actions[link.target_index].outcomes.length,
+                    AppState.actions[link.target_index].inputs.length,
+                    AppState.actions[link.target_index].outputs.length
+                ),
             };
         }
     }
