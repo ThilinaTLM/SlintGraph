@@ -143,10 +143,9 @@ impl UiController {
     }
 }
 
-
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen(start))]
+fn main() {
+    println!("Starting app...");
     let ui = UiController::new("data/enactor-1-1.0.xml".to_string());
     ui.run();
-    Ok(())
 }
