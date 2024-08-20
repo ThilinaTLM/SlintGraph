@@ -7,11 +7,11 @@ export global ActionUtils {
         inputs-count: int,
         outputs-count: int
     ) -> length {
-        return 60px
-            + (3 * 20px)
-            + (outcomes-count * 20px)
-            + (inputs-count * 20px)
-            + (outputs-count * 20px);
+        return 20px
+        + (20px + (outcomes-count * 20px))
+        + (20px + (inputs-count * 20px))
+        + (20px + (outputs-count * 20px))
+        + 10px;
     }
 }
 

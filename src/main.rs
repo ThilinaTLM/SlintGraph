@@ -4,10 +4,10 @@ mod graph;
 mod ui_utils;
 mod xml_utils;
 
-use std::{path::PrefixComponent, rc::Rc};
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use ui_utils::{AppState, UiProcessAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData};
+use std::{path::PrefixComponent, rc::Rc};
+use ui_utils::{AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData, UiProcessAdapter};
 use xml_utils::Process;
 
 struct UiController {
@@ -55,55 +55,61 @@ impl UiController {
         println!("Node updated: {:?}", node);
         let ui = self.ui_weak.upgrade().unwrap();
         let graph_state = ui.global::<AppState>();
-        
+
         // update node
         let nodes_model = graph_state.get_nodes();
-        let nodes = nodes_model.iter().map(|n| {
-            if n.id == node.id {
-                node.clone()
-            } else {
-                n.clone()
-            }
-        }).collect::<Vec<_>>();
+        let nodes = nodes_model
+            .iter()
+            .map(|n| {
+                if n.id == node.id {
+                    node.clone()
+                } else {
+                    n.clone()
+                }
+            })
+            .collect::<Vec<_>>();
         let nodes_model: Rc<VecModel<UiNodeData>> = Rc::new(VecModel::from(nodes));
 
         // update edges
         let edges_model = graph_state.get_edges();
-        let edges = edges_model.iter().map(|edge| {
-            if edge.source == node.id {
-                UiEdgeData {
-                    id: edge.id.into(),
-                    source: edge.source.into(),
-                    target: edge.target.into(),
-                    source_dim: UiDimention {
-                        x: node.x,
-                        y: node.y,
-                        width: node.width,
-                        height: node.height,
-                    },
-                    target_dim: edge.target_dim,
-                    source_index: edge.source_index,
-                    target_index: edge.target_index,
+        let edges = edges_model
+            .iter()
+            .map(|edge| {
+                if edge.source == node.id {
+                    UiEdgeData {
+                        id: edge.id.into(),
+                        source: edge.source.into(),
+                        target: edge.target.into(),
+                        source_dim: UiDimention {
+                            x: node.x,
+                            y: node.y,
+                            width: node.width,
+                            height: node.height,
+                        },
+                        target_dim: edge.target_dim,
+                        source_index: edge.source_index,
+                        target_index: edge.target_index,
+                    }
+                } else if edge.target == node.id {
+                    UiEdgeData {
+                        id: edge.id.into(),
+                        source: edge.source.into(),
+                        target: edge.target.into(),
+                        source_dim: edge.source_dim,
+                        target_dim: UiDimention {
+                            x: node.x,
+                            y: node.y,
+                            width: node.width,
+                            height: node.height,
+                        },
+                        source_index: edge.source_index,
+                        target_index: edge.target_index,
+                    }
+                } else {
+                    edge.clone()
                 }
-            } else if edge.target == node.id {
-                UiEdgeData {
-                    id: edge.id.into(),
-                    source: edge.source.into(),
-                    target: edge.target.into(),
-                    source_dim: edge.source_dim,
-                    target_dim: UiDimention {
-                        x: node.x,
-                        y: node.y,
-                        width: node.width,
-                        height: node.height,
-                    },
-                    source_index: edge.source_index,
-                    target_index: edge.target_index,
-                }
-            } else {
-                edge.clone()
-            }
-        }).collect::<Vec<_>>();
+            })
+            .collect::<Vec<_>>();
         let edges_model = Rc::new(VecModel::from(edges));
 
         // update graph state
@@ -122,14 +128,15 @@ impl UiController {
         let ui_links = process_ui_adapter.ui_links;
 
         // process ui actions
-        let (max_x, max_y) = ui_actions.iter().fold((0f32, 0f32), |(max_x, max_y), action| {
-            (f32::max(max_x, action.x), f32::max(max_y, action.y))
-        });
+        let (max_x, max_y) = ui_actions
+            .iter()
+            .fold((0f32, 0f32), |(max_x, max_y), action| {
+                (f32::max(max_x, action.x), f32::max(max_y, action.y))
+            });
         let ui_actions_model = Rc::new(VecModel::from(ui_actions));
 
         // process ui action links
         let ui_links_model = Rc::new(VecModel::from(ui_links));
-        
         let ui = self.ui_weak.upgrade().unwrap();
         let app_state = ui.global::<AppState>();
         app_state.set_viewport_width(max_x);
@@ -139,7 +146,7 @@ impl UiController {
     }
 
     fn save_data_to_file(&self, path: &str) {
-        todo!();    
+        todo!();
     }
 }
 

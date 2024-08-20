@@ -4,10 +4,6 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 
-[lib]
-path = "src/lib.rs"
-crate-type = ["cdylib"]
-
 [dependencies]
 serde = { version = "1.0.130", features = ["derive"] }
 quick-xml = { version = "0.36.1", features = ["arbitrary", "encoding", "encoding_rs", "escape-html", "overlapped-lists", "serde", "serde-types", "serialize"] }
@@ -20,3 +16,8 @@ slint-build = "1.7.2"
 wasm-bindgen = { version = "0.2" }
 getrandom = { version = "0.2.2", features = ["js"] }
 web-sys = { version = "0.3.5" }
+
+# WASM library configuration
+[target.'cfg(target_arch = "wasm32")'.lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
