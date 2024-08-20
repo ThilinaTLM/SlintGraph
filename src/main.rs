@@ -7,7 +7,7 @@ mod xml_utils;
 use std::{path::PrefixComponent, rc::Rc};
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
-use ui_utils::{AppState, UiProcessAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData, FnUtils};
+use ui_utils::{AppState, UiProcessAdapter, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData};
 use xml_utils::Process;
 
 struct UiController {
@@ -39,7 +39,6 @@ impl UiController {
     fn setup_handlers(self: &Rc<Self>) {
         let ui = self.ui_weak.upgrade().unwrap();
         let app_state = ui.global::<AppState>();
-        let fn_utils = ui.global::<FnUtils>();
 
         let controller = self.clone();
         app_state.on_save(move || {
