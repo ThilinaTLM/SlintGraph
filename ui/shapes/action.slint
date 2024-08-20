@@ -1,5 +1,22 @@
 import { UiDimention, UiElementItem } from "../types.slint";
-import { VerticalBox } from "std-widgets.slint";
+
+export global ActionStyle {
+    out property <length> header-height: 20px;
+    out property <length> name-height: 20px;
+    out property <length> section-separator-height: 20px;
+    out property <length> section-header-height: 20px;
+    out property <length> item-height: 20px;
+    out property <length> bottom-padding: 10px;
+    out property <length> border-height: 2px;
+    out property <color> border-color: #25d434;
+    out property <color> header-background: #25d434;
+    out property <color> text-color: #222222;
+    out property <color> item-text-color: #7c7c7c;
+    out property <length> font-size: 12px;
+    out property <int> font-weight: 600;
+    out property <length> section-padding: 5px;
+}
+
 
 export global ActionUtils {
     public pure function calculate-action-height(
@@ -7,11 +24,11 @@ export global ActionUtils {
         inputs-count: int,
         outputs-count: int
     ) -> length {
-        return 20px
-        + (20px + (outcomes-count * 20px))
-        + (20px + (inputs-count * 20px))
-        + (20px + (outputs-count * 20px))
-        + 10px;
+        return ActionStyle.header-height + ActionStyle.name-height +
+               (ActionStyle.section-separator-height + ActionStyle.section-header-height + (outcomes-count * ActionStyle.item-height)) +
+               (ActionStyle.section-separator-height + ActionStyle.section-header-height + (inputs-count * ActionStyle.item-height)) +
+               (ActionStyle.section-separator-height + ActionStyle.section-header-height + (outputs-count * ActionStyle.item-height)) +
+               ActionStyle.bottom-padding + ActionStyle.border-height;
     }
 }
 
@@ -20,39 +37,31 @@ component ActionSection {
     in property <[UiElementItem]> items;
 
     VerticalLayout {
-        
         HorizontalLayout {
-            padding-left: 5px;
-            padding-right: 5px;
+            padding-left: ActionStyle.section-padding;
+            padding-right: ActionStyle.section-padding;
             Path {
-                height: 20px;
+                height: ActionStyle.section-separator-height;
                 stroke: #c5c5c5;
                 stroke-width: 1px;
     
-                MoveTo {
-                    x: 0;
-                    y: 0;
-                }
-    
-                LineTo {
-                    x: 100;
-                    y: 0;
-                }
+                MoveTo { x: 0; y: 0; }
+                LineTo { x: 100; y: 0; }
             }
         }
 
         Rectangle {
-            height: 20px;
+            height: ActionStyle.section-header-height;
             background: #ffffff;            
     
             VerticalLayout {
-                VerticalBox {
+                VerticalLayout {
                     height: parent.height;
                     Text {
                         text: root.header;
-                        color: #222222;
-                        font-size: 12px;
-                        font-weight: 600;
+                        color: ActionStyle.text-color;
+                        font-size: ActionStyle.font-size;
+                        font-weight: ActionStyle.font-weight;
                         vertical-alignment: top;
                         horizontal-alignment: left;
                     }
@@ -61,25 +70,24 @@ component ActionSection {
         }
 
         VerticalLayout {
-            padding-left: 5px;
+            padding-left: ActionStyle.section-padding;
             for item in root.items: Rectangle {
-                height: 20px;
+                height: ActionStyle.item-height;
                 background: #ffffff;            
     
-                VerticalBox {
+                VerticalLayout {
                     height: parent.height;
                     Text {
                         text: item.simple_name;
-                        color: #7c7c7c;
-                        font-size: 12px;
-                        font-weight: 600;
+                        color: ActionStyle.item-text-color;
+                        font-size: ActionStyle.font-size;
+                        font-weight: ActionStyle.font-weight;
                         vertical-alignment: center;
                         horizontal-alignment: left;
                     }
                 }
             }
         }
-
     }
 }
 
@@ -133,39 +141,39 @@ export component Action {
     // border
     Rectangle {
         background: white;
-        border-color: #25d434;
-        border-width: 1px;
-        width: child.width + 2px;
-        height: child.height + 2px;
+        border-color: ActionStyle.border-color;
+        border-width: ActionStyle.border-height / 2;
+        width: child.width + ActionStyle.border-height;
+        height: child.height + ActionStyle.border-height;
     }
 
     child := VerticalLayout {
-        padding-bottom: 10px;
+        padding-bottom: ActionStyle.bottom-padding;
 
         Rectangle {
-            height: 20px;
+            height: ActionStyle.header-height;
             min-width: 200px;
-            background: #25d434;
+            background: ActionStyle.header-background;
             border-radius: 2px;
 
             Text {
                 text: "Action";
                 color: white;
-                font-size: 12px;
-                font-weight: 600;
+                font-size: ActionStyle.font-size;
+                font-weight: ActionStyle.font-weight;
                 vertical-alignment: center;
                 horizontal-alignment: center;
             }
         }
 
         Rectangle {
-            height: 20px;
+            height: ActionStyle.name-height;
 
             Text {
                 text: root.name;
-                color: #222222;
-                font-size: 12px;
-                font-weight: 600;
+                color: ActionStyle.text-color;
+                font-size: ActionStyle.font-size;
+                font-weight: ActionStyle.font-weight;
                 vertical-alignment: center;
                 horizontal-alignment: center;
             }
@@ -186,5 +194,4 @@ export component Action {
             items: root.outputs;
         }
     }
-    
 }
