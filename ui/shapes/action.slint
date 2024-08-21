@@ -34,7 +34,7 @@ export global ActionUtils {
     public pure function calculate-outcome-y-offset(outcome-index: int) -> length {
         return ActionStyle.header-height + ActionStyle.name-height +
                ActionStyle.section-separator-height + ActionStyle.section-header-height +
-               (outcome-index * ActionStyle.item-height) - ActionStyle.item-height / 2;
+               ((outcome-index + 1) * ActionStyle.item-height) - ActionStyle.item-height / 2;
     }
 }
 

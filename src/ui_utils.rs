@@ -78,7 +78,7 @@ impl UiProcessAdapter {
         for action in all_actions {
             let source_action_index = find_ui_action_index_by_id(&ui_actions, &action.action_id);
 
-            for outcome_link in &action.outcome_links {
+            for (outcome_index, outcome_link) in action.outcome_links.iter().enumerate() {
                 let action_id = &outcome_link.to_action_id;
                 if (!action_id.is_empty()) {
                     let target_action_index = find_ui_action_index_by_id(&ui_actions, &action_id);
@@ -88,6 +88,7 @@ impl UiProcessAdapter {
                             source_id: action.action_id.clone().into(),
                             source_type: UiElementType::Action,
                             source_index: source_action_index.try_into().expect("Index should fit into UiLink source_index type"),
+                            source_outcome_index: outcome_index.try_into().expect("Index should fit into UiLink source_outcome_index type"),
                             target_id: action_id.clone().into(),
                             target_type: UiElementType::Action,
                             target_index: target_action_index.try_into().expect("Index should fit into UiLink target_index type"),

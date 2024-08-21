@@ -49,6 +49,7 @@ component App {
         }
 
         for link[i] in AppState.links: SingleSideWrapArrowEdge {
+            from-y-offset: ActionUtils.calculate-outcome-y-offset(link.source_outcome_index);
             from: {
                 x: AppState.actions[link.source_index].x,
                 y: AppState.actions[link.source_index].y,
