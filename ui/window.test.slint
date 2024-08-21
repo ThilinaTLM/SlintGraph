@@ -1,0 +1,65 @@
+import { ScrollView } from "std-widgets.slint";
+
+import { Action, ActionUtils } from "./shapes/action.slint";
+import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
+import { UiNodeData, UiEdgeData, UiDimention, UiAction, UiLink } from "./types.slint";
+
+component Test {
+    a1 := Action {
+        x: 300px;
+        y: 100px;
+        name: "Test Action 1";
+        inputs: [];
+        outputs: [];
+        outcomes: [{
+            name: "Outcome 1",
+            simple_name: "Outcome 1",
+            required: true,
+            unused: false,
+        }];
+    }
+
+    a2 := Action {
+        x: 250px;
+        y: 350px;
+        name: "Test Action 2";
+        inputs: [];
+        outputs: [];
+        outcomes: [];
+    }
+
+    SingleSideWrapArrowEdge {
+        from-y-offset: ActionUtils.calculate-outcome-y-offset(a1.outcomes.length);
+        from: {
+            x: a1.x,
+            y: a1.y,
+            width: 200px,
+            height: ActionUtils.calculate-action-height(
+                a1.outcomes.length,
+                a1.inputs.length,
+                a1.outputs.length
+            ),
+        };
+        to: {
+            x: a2.x,
+            y: a2.y,
+            width: 200px,
+            height: ActionUtils.calculate-action-height(
+                a2.outcomes.length,
+                a2.inputs.length,
+                a2.outputs.length
+            ),
+        };
+    }
+}
+
+export component SlintDemoWindow inherits Window {
+    min-width: 800px;
+    min-height: 600px;
+
+    Test {
+        width: root.width;
+        height: root.height;
+    }
+    
+}

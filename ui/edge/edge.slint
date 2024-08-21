@@ -74,6 +74,7 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
     in property <int> wrap-distance: arrow-size + 2;
     in property <int> from-wrap-distance: wrap-distance;
     in property <int> to-wrap-distance: wrap-distance;
+    in property <length> from-y-offset: root.from.height / 2;
 
     property <bool> x-overlap: (-1 < root.zone-x-ratio) && (root.zone-x-ratio < 1);
     property <bool> y-overlap: (-1 < root.zone-y-ratio) && (root.zone-y-ratio < 1);
@@ -86,7 +87,7 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
     property <Point> start: {
         return {
             x: root.zone-x == Zone.left ? root.from.x : root.from.x + root.from.width,
-            y: root.from.y + root.from.height / 2
+            y: root.from.y + root.from-y-offset
         };
     }
     property <Point> end: {
@@ -139,7 +140,7 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
 
         LineTo {
             x: (root.start.x - root.x) / 1px + (root.zone-x == Zone.left ? -from-wrap-distance : from-wrap-distance);
-            y: (root.start.y - root.y) / 1px + (wrap-edge-around ? (root.zone-y == Zone.top ? root.from.height : -root.from.height) / 2px : 0);
+            y: (root.start.y - root.y) / 1px + (wrap-edge-around ? (root.zone-y == Zone.bottom ? -root.from-y-offset : root.from.height - root.from-y-offset) / 1px : 0);
         }
 
         LineTo {
@@ -158,7 +159,8 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
         color: blue;
         x: root.end.x - root.x;
         y: root.end.y - root.y;
-        angle: atan((root.end.y - root.start.y) / (root.end.x - root.start.x)) + (root.zone-x-ratio > -0.5? 180deg: 0);
+        angle: atan((root.end.y - root.start.y - (wrap-edge-around ? (root.zone-y == Zone.bottom ? -root.from-y-offset : root.from.height - root.from-y-offset) : 0)) / 
+                    (root.end.x - root.start.x - (root.zone-x == Zone.left ? -from-wrap-distance : from-wrap-distance) * 1px)) + (root.zone-x-ratio > -0.5 ? 180deg : 0);
     }
 }
 
