@@ -6,6 +6,7 @@ import { UiNodeData, UiEdgeData, UiDimention, UiAction, UiLink } from "./types.s
 
 component Test {
     a1 := Action {
+        z: 10;
         x: 300px;
         y: 100px;
         name: "Test Action 1";
@@ -17,12 +18,13 @@ component Test {
             required: true,
             unused: false,
         }];
+        selected: true;
     }
 
     a2 := Action {
         x: 250px;
         y: 350px;
-        name: "Test Action 2";
+        name: "Long Test Long Test Long Test Action 2";
         inputs: [];
         outputs: [];
         outcomes: [];

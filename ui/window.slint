@@ -16,6 +16,8 @@ export global AppState {
     in-out property <[UiAction]> actions: [];
     in-out property <[UiLink]> links: [];
 
+    in-out property <int> selected-index;
+
     callback update-node(UiNodeData);
     callback save();
 }
@@ -37,10 +39,16 @@ component App {
         for action[i] in AppState.actions: Action {
             x: action.x;
             y: action.y;
+            selected: AppState.selected-index == i;
+
             name: action.id;
             inputs: action.inputs;
             outputs: action.outputs;
             outcomes: action.outcomes;
+
+            on-clicked => {
+                AppState.selected-index = i;
+            }
 
             on-move => {
                 AppState.actions[i].x = self.x;
@@ -49,6 +57,7 @@ component App {
         }
 
         for link[i] in AppState.links: SingleSideWrapArrowEdge {
+            z: 100;
             from-y-offset: ActionUtils.calculate-outcome-y-offset(link.source_outcome_index);
             from: {
                 x: AppState.actions[link.source_index].x,

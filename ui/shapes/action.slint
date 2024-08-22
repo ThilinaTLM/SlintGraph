@@ -8,7 +8,9 @@ export global ActionStyle {
     out property <length> item-height: 20px;
     out property <length> bottom-padding: 10px;
     out property <length> border-height: 2px;
+    out property <length> border-height-selected: 4px;
     out property <color> border-color: #25d434;
+    out property <color> border-color-selected: #25d434;
     out property <color> header-background: #25d434;
     out property <color> text-color: #222222;
     out property <color> item-text-color: #7c7c7c;
@@ -81,16 +83,19 @@ component ActionSection {
             for item in root.items: Rectangle {
                 height: ActionStyle.item-height;
                 background: #ffffff;            
-    
-                VerticalLayout {
-                    height: parent.height;
-                    Text {
-                        text: item.simple_name;
-                        color: ActionStyle.item-text-color;
-                        font-size: ActionStyle.font-size;
-                        font-weight: ActionStyle.font-weight;
-                        vertical-alignment: center;
-                        horizontal-alignment: left;
+                
+                Rectangle {
+                    clip: true;
+                    VerticalLayout {
+                        height: parent.height;
+                        Text {
+                            text: item.simple_name;
+                            color: ActionStyle.item-text-color;
+                            font-size: ActionStyle.font-size;
+                            font-weight: ActionStyle.font-weight;
+                            vertical-alignment: center;
+                            horizontal-alignment: left;
+                        }
                     }
                 }
             }
@@ -105,11 +110,15 @@ export component Action {
     
     callback on-move(UiDimention);
     callback on-move-end(UiDimention);
+    callback on-clicked();
 
     in property <string> name;
     in property <[UiElementItem]> outcomes;
     in property <[UiElementItem]> inputs;
     in property <[UiElementItem]> outputs;
+    in property <bool> selected;
+
+    width: 200px;
 
     TouchArea {
         width: parent.width;
@@ -131,6 +140,10 @@ export component Action {
             }
         }
 
+        clicked => {
+            root.on-clicked();
+        }
+
         moved => {
             if (root.moving) {
                 root.x = root.x + self.mouse-x - root.offset-x;
@@ -147,19 +160,21 @@ export component Action {
 
     // border
     Rectangle {
+        property <length> active-border-height: root.selected ? ActionStyle.border-height-selected : ActionStyle.border-height;
+
         background: white;
-        border-color: ActionStyle.border-color;
-        border-width: ActionStyle.border-height / 2;
-        width: child.width + ActionStyle.border-height;
-        height: child.height + ActionStyle.border-height;
+        border-color: root.selected ? ActionStyle.border-color-selected : ActionStyle.border-color;
+        border-width: active-border-height / 2;
+        width: child.width + active-border-height;
+        height: child.height + active-border-height;
     }
 
     child := VerticalLayout {
         padding-bottom: ActionStyle.bottom-padding;
 
         Rectangle {
+            width: root.width;
             height: ActionStyle.header-height;
-            min-width: 200px;
             background: ActionStyle.header-background;
             border-radius: 2px;
 
@@ -173,30 +188,40 @@ export component Action {
             }
         }
 
-        Rectangle {
-            height: ActionStyle.name-height;
+        HorizontalLayout {
+            padding-left: ActionStyle.section-padding;
+            padding-right: ActionStyle.section-padding;
 
-            Text {
-                text: root.name;
-                color: ActionStyle.text-color;
-                font-size: ActionStyle.font-size;
-                font-weight: ActionStyle.font-weight;
-                vertical-alignment: center;
-                horizontal-alignment: center;
+            Rectangle {
+                width: root.width - ActionStyle.section-padding * 2;
+                height: ActionStyle.name-height;
+                clip: true;
+    
+                Text {
+                    text: root.name;
+                    color: ActionStyle.text-color;
+                    font-size: ActionStyle.font-size;
+                    font-weight: ActionStyle.font-weight;
+                    vertical-alignment: center;
+                    horizontal-alignment: center;
+                }
             }
         }
-
+        
         ActionSection {
+            width: root.width;
             header: "Outcomes";
             items: root.outcomes;
         }
 
         ActionSection {
+            width: root.width;
             header: "Inputs";
             items: root.inputs;
         }
 
         ActionSection {
+            width: root.width;
             header: "Outputs";
             items: root.outputs;
         }

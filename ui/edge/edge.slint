@@ -29,6 +29,7 @@ global Fn {
 export component BaseEdge {
     in-out property <UiDimention> from;
     in-out property <UiDimention> to;
+    in-out property <brush> color: black;
 
     out property <float> zone-x-ratio: (2 * (to.x - from.x) + (to.width - from.width)) / (to.width +from.width);
     out property <float> zone-y-ratio: (2 * (to.y - from.y) + (to.height - from.height)) / (to.height + from.height);
@@ -124,7 +125,7 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
         height: root.height;
         viewbox-width: self.width / 1px;
         viewbox-height: self.height / 1px;
-        stroke: blue;
+        stroke: root.color;
         stroke-width: 1px;
         clip: false;
 
@@ -149,14 +150,14 @@ export component SingleSideWrapArrowEdge inherits BaseEdge {
         }
     }
 
-    // Text {
-    //     text: "\{round(root.zone-x-ratio*100)/100}, \{round(parent.zone-y-ratio*100)/100}";
-    //     // text: "\{Fn.zoneTostring(root.zone)}";
-    // }
+    Text {
+        // text: "\{round(root.zone-x-ratio*100)/100}, \{round(parent.zone-y-ratio*100)/100}";
+        // text: "\{Fn.zoneTostring(root.zone)}";
+    }
 
     ArrowHead {
         size: arrow-size;
-        color: blue;
+        color: root.color;
         x: root.end.x - root.x;
         y: root.end.y - root.y;
         angle: atan((root.end.y - root.start.y - (wrap-edge-around ? (root.zone-y == Zone.bottom ? -root.from-y-offset : root.from.height - root.from-y-offset) : 0)) / 
