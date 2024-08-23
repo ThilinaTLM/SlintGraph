@@ -6,10 +6,19 @@ build = "build.rs"
 
 [dependencies]
 serde = { version = "1.0.130", features = ["derive"] }
-quick-xml = { version = "0.36.1", features = ["arbitrary", "encoding", "encoding_rs", "escape-html", "overlapped-lists", "serde", "serde-types", "serialize", "async-tokio"] }
-slint = "1.7.2"
-tokio = { version = "1.39.2", features = ["full"]}
-futures = { version = "0.3.30" }
+quick-xml = { version = "0.36.1", features = ["arbitrary", "encoding", "encoding_rs", "escape-html", "overlapped-lists", "serde", "serde-types", "serialize"] }
+slint = { version = "1.7.2" }
 
 [build-dependencies]
 slint-build = "1.7.2"
+
+# WASM dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { version = "0.2" }
+getrandom = { version = "0.2.2", features = ["js"] }
+web-sys = { version = "0.3.5" }
+
+# WASM library configuration
+[target.'cfg(target_arch = "wasm32")'.lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
