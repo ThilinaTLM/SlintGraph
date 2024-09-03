@@ -8,11 +8,11 @@ slint::include_modules!();
 
 pub struct UiProcessAdapter {
     pub process: Process,
-    pub ui_actions: Vec<UiAction>,
+    pub ui_actions: Vec<UiNode>,
     pub ui_links: Vec<UiLink>,
 }
 
-fn find_ui_action_index_by_id(actions: &Vec<UiAction>, id: &str) -> Option<usize> {
+fn find_ui_action_index_by_id(actions: &Vec<UiNode>, id: &str) -> Option<usize> {
     actions.iter().enumerate().find_map(|(index, action)| {
         if action.id == id {
             Some(index)
@@ -34,25 +34,25 @@ impl UiProcessAdapter {
     pub fn new(process: Process) -> Self {
         let all_actions = process.get_all_actions();
 
-        let ui_actions: Vec<UiAction> = all_actions.iter().map(|action| {
-            let ui_actions: Vec<UiElementItem> = action.meta_data.get_inputs_as_strings().into_iter().map(|s| {
-                UiElementItem {
+        let ui_actions: Vec<UiNode> = all_actions.iter().map(|action| {
+            let ui_actions: Vec<UiSectionItem> = action.meta_data.get_inputs_as_strings().into_iter().map(|s| {
+                UiSectionItem {
                     name: s.clone().into(),
                     simple_name: get_simple_name(&s).into(),
                     required: false,
                     unused: false,
                 }
             }).collect();
-            let ui_outputs: Vec<UiElementItem> = action.meta_data.get_outputs_as_strings().into_iter().map(|s| {
-                UiElementItem {
+            let ui_outputs: Vec<UiSectionItem> = action.meta_data.get_outputs_as_strings().into_iter().map(|s| {
+                UiSectionItem {
                     name: s.clone().into(),
                     simple_name: get_simple_name(&s).into(),
                     required: false,
                     unused: false,
                 }
             }).collect();
-            let ui_outcomes: Vec<UiElementItem> = action.meta_data.get_outcomes_as_strings().into_iter().map(|s| {
-                UiElementItem {
+            let ui_outcomes: Vec<UiSectionItem> = action.meta_data.get_outcomes_as_strings().into_iter().map(|s| {
+                UiSectionItem {
                     name: s.clone().into(),
                     simple_name: get_simple_name(&s).into(),
                     required: false,
@@ -63,9 +63,10 @@ impl UiProcessAdapter {
             let inputs_model = Rc::new(VecModel::from(ui_actions));
             let outputs_model = Rc::new(VecModel::from(ui_outputs));
             let outcomes_model = Rc::new(VecModel::from(ui_outcomes));
-            UiAction {
+            UiNode {
                 id: action.action_id.clone().into(),
                 name: action.name.clone().into(),
+                class: UiNodeClass::Action,
                 x: action.ui_hints.get_xloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
                 y: action.ui_hints.get_yloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
                 inputs: inputs_model.into(),
@@ -86,11 +87,11 @@ impl UiProcessAdapter {
                         ui_links.push(UiLink {
                             id: outcome_link.link_id.clone().into(),
                             source_id: action.action_id.clone().into(),
-                            source_type: UiElementType::Action,
+                            source_type: UiNodeClass::Action,
                             source_index: source_action_index.try_into().expect("Index should fit into UiLink source_index type"),
                             source_outcome_index: outcome_index.try_into().expect("Index should fit into UiLink source_outcome_index type"),
                             target_id: action_id.clone().into(),
-                            target_type: UiElementType::Action,
+                            target_type: UiNodeClass::Action,
                             target_index: target_action_index.try_into().expect("Index should fit into UiLink target_index type"),
                         });
                     }

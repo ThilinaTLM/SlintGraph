@@ -7,7 +7,7 @@ mod xml_utils;
 use graph::{Edge, Graph, Node};
 use slint::{Color, ComponentHandle, Model, VecModel};
 use std::{path::PrefixComponent, rc::Rc};
-use ui_utils::{AppState, SlintDemoWindow, UiDimention, UiEdgeData, UiNodeData, UiProcessAdapter};
+use ui_utils::{AppState, SlintDemoWindow, UiDimention, UiProcessAdapter};
 use xml_utils::Process;
 
 struct UiController {
@@ -46,78 +46,6 @@ impl UiController {
         });
 
         let controller = self.clone();
-        app_state.on_update_node(move |node| {
-            controller.on_update_node(&node);
-        });
-    }
-
-    fn on_update_node(&self, node: &UiNodeData) {
-        println!("Node updated: {:?}", node);
-        let ui = self.ui_weak.upgrade().unwrap();
-        let graph_state = ui.global::<AppState>();
-
-        // update node
-        let nodes_model = graph_state.get_nodes();
-        let nodes = nodes_model
-            .iter()
-            .map(|n| {
-                if n.id == node.id {
-                    node.clone()
-                } else {
-                    n.clone()
-                }
-            })
-            .collect::<Vec<_>>();
-        let nodes_model: Rc<VecModel<UiNodeData>> = Rc::new(VecModel::from(nodes));
-
-        // update edges
-        let edges_model = graph_state.get_edges();
-        let edges = edges_model
-            .iter()
-            .map(|edge| {
-                if edge.source == node.id {
-                    UiEdgeData {
-                        id: edge.id.into(),
-                        source: edge.source.into(),
-                        target: edge.target.into(),
-                        source_dim: UiDimention {
-                            x: node.x,
-                            y: node.y,
-                            width: node.width,
-                            height: node.height,
-                        },
-                        target_dim: edge.target_dim,
-                        source_index: edge.source_index,
-                        target_index: edge.target_index,
-                    }
-                } else if edge.target == node.id {
-                    UiEdgeData {
-                        id: edge.id.into(),
-                        source: edge.source.into(),
-                        target: edge.target.into(),
-                        source_dim: edge.source_dim,
-                        target_dim: UiDimention {
-                            x: node.x,
-                            y: node.y,
-                            width: node.width,
-                            height: node.height,
-                        },
-                        source_index: edge.source_index,
-                        target_index: edge.target_index,
-                    }
-                } else {
-                    edge.clone()
-                }
-            })
-            .collect::<Vec<_>>();
-        let edges_model = Rc::new(VecModel::from(edges));
-
-        // update graph state
-        graph_state.set_nodes(nodes_model.into());
-        graph_state.set_edges(edges_model.into());
-
-        // save
-        graph_state.invoke_save();
     }
 
     fn load_data_from_file(&self, path: &str) {

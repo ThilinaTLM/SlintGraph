@@ -1,4 +1,3 @@
-
 export struct UiDimention {
     x: length,
     y: length,
@@ -6,57 +5,36 @@ export struct UiDimention {
     height: length,
 }
 
-export struct UiNodeData {
-    id: string,
-    label: string,
-    x: length,
-    y: length,
-    width: length,
-    height: length,
-}
-
-export struct UiEdgeData {
-    id: string,
-    source: string,
-    target: string,
-    source-dim: UiDimention,
-    target-dim: UiDimention,
-    source-index: int,
-    target-index: int,
-}
-
-
-// -----------------------------
-
-export enum UiElementType {
+export enum UiNodeClass {
     Action,
     State
 }
 
-export struct UiElementItem {
+export struct UiSectionItem {
     name: string,
     simple_name: string,
     unused: bool,
     required: bool,
 }
 
-export struct UiAction {
+export struct UiNode {
     id: string,
+    class: UiNodeClass,
     name: string,
     x: length,
     y: length,
-    outcomes: [UiElementItem],
-    inputs: [UiElementItem],
-    outputs: [UiElementItem],
+    outcomes: [UiSectionItem],
+    inputs: [UiSectionItem],
+    outputs: [UiSectionItem],
 }
 
 export struct UiLink {
     id: string,
-    source_type: UiElementType,
+    source_type: UiNodeClass,
     source_id: string,
     source_index: int,
     source_outcome_index: int,
-    target_type: UiElementType,
+    target_type: UiNodeClass,
     target_id: string,
     target_index: int,
 }

@@ -1,4 +1,4 @@
-import { UiDimention, UiElementItem } from "../types.slint";
+import { UiDimention, UiSectionItem } from "../types.slint";
 
 export struct NodeStyle {
     header-height: length,
@@ -48,7 +48,7 @@ export global NodeUtils {
 
 export component NodeSection {
     in property <string> header;
-    in property <[UiElementItem]> items;
+    in property <[UiSectionItem]> items;
 
     VerticalLayout {
         // Section Seperator Line
@@ -126,9 +126,9 @@ export component NodeBase {
 
     in property <string> title;
     in property <string> subtitle;
-    in property <[UiElementItem]> outcomes;
-    in property <[UiElementItem]> inputs;
-    in property <[UiElementItem]> outputs;
+    in property <[UiSectionItem]> outcomes;
+    in property <[UiSectionItem]> inputs;
+    in property <[UiSectionItem]> outputs;
     in property <bool> selected;
 
     width: 200px;
