@@ -1,0 +1,227 @@
+import { UiDimention, UiElementItem } from "../types.slint";
+
+export struct NodeStyle {
+    header-height: length,
+    name-height: length,
+    section-separator-height: length,
+    section-header-height: length,
+    item-height: length,
+    bottom-padding: length,
+    border-height: length,
+    border-height-selected: length,
+    border-color: color,
+    border-color-selected: color,
+    header-background: color,
+    text-color: color,
+    item-text-color: color,
+    font-size: length,
+    font-weight: int,
+    section-padding: length,    
+}
+
+export global NodeUtils {
+
+    out property <NodeStyle> style-sheet: {
+        header-height: 20px,
+        header-height: 20px,
+        name-height: 20px,
+        section-separator-height: 20px,
+        section-header-height: 20px,
+        item-height: 20px,
+        bottom-padding: 10px,
+        border-height: 2px,
+        border-height-selected: 4px,
+        border-color: #25d434,
+        border-color-selected: #25d434,
+        header-background: #25d434,
+        text-color: #222222,
+        item-text-color: #7c7c7c,
+        font-size: 12px,
+        font-weight: 600,
+        section-padding: 5px,
+    };
+
+    public pure function calculate-node-height(sections: int, section-items-total: int) -> length {
+        return style-sheet.header-height + style-sheet.name-height + (sections * (style-sheet.section-separator-height + style-sheet.section-header-height)) + (section-items-total * style-sheet.item-height) + style-sheet.bottom-padding + style-sheet.border-height;
+    }
+}
+
+export component NodeSection {
+    in property <string> header;
+    in property <[UiElementItem]> items;
+
+    VerticalLayout {
+        // Section Seperator Line
+        HorizontalLayout {
+            padding-left: NodeUtils.style-sheet.section-padding;
+            padding-right: NodeUtils.style-sheet.section-padding;
+            Path {
+                height: NodeUtils.style-sheet.section-separator-height;
+                stroke: #c5c5c5;
+                stroke-width: 1px;
+                MoveTo {
+                    x: 0;
+                    y: 0;
+                }
+
+                LineTo {
+                    x: 100;
+                    y: 0;
+                }
+            }
+        }
+
+        // Section Header
+        Rectangle {
+            height: NodeUtils.style-sheet.section-header-height;
+            background: #ffffff;
+            VerticalLayout {
+                padding-left: NodeUtils.style-sheet.section-padding;
+                VerticalLayout {
+                    height: parent.height;
+                    Text {
+                        text: root.header;
+                        color: NodeUtils.style-sheet.text-color;
+                        font-size: NodeUtils.style-sheet.font-size;
+                        font-weight: NodeUtils.style-sheet.font-weight;
+                        vertical-alignment: top;
+                        horizontal-alignment: left;
+                    }
+                }
+            }
+        }
+
+        // Section Items
+        VerticalLayout {
+            padding-left: NodeUtils.style-sheet.section-padding;
+            for item in root.items: Rectangle {
+                height: NodeUtils.style-sheet.item-height;
+                background: #ffffff;
+                Rectangle {
+                    clip: true;
+                    VerticalLayout {
+                        height: parent.height;
+                        Text {
+                            text: item.simple_name;
+                            color: NodeUtils.style-sheet.item-text-color;
+                            font-size: NodeUtils.style-sheet.font-size;
+                            font-weight: NodeUtils.style-sheet.font-weight;
+                            vertical-alignment: center;
+                            horizontal-alignment: left;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export component NodeBase {
+    property <bool> moving;
+    property <length> offset-x;
+    property <length> offset-y;
+    callback on-move(UiDimention);
+    callback on-move-end(UiDimention);
+    callback on-clicked();
+
+    in property <string> title;
+    in property <string> subtitle;
+    in property <[UiElementItem]> outcomes;
+    in property <[UiElementItem]> inputs;
+    in property <[UiElementItem]> outputs;
+    in property <bool> selected;
+
+    width: 200px;
+
+    TouchArea {
+        width: parent.width;
+        height: parent.height;
+
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                root.offset-x = self.mouse-x;
+                root.offset-y = self.mouse-y;
+                root.moving = true;
+            } else if (event.kind == PointerEventKind.up) {
+                root.moving = false;
+                on-move-end({
+                    x: root.x,
+                    y: root.y,
+                    width: root.width,
+                    height: root.height,
+                });
+            }
+        }
+
+        clicked => {
+            root.on-clicked();
+        }
+
+        moved => {
+            if (root.moving) {
+                root.x = root.x + self.mouse-x - root.offset-x;
+                root.y = root.y + self.mouse-y - root.offset-y;
+                on-move({
+                    x: root.x,
+                    y: root.y,
+                    width: root.width,
+                    height: root.height,
+                });
+            }
+        }
+    }
+
+    // Node Border and Background
+    Rectangle {
+        property <length> active-border-height: root.selected ? NodeUtils.style-sheet.border-height-selected : NodeUtils.style-sheet.border-height;
+
+        background: white;
+        border-color: root.selected ? NodeUtils.style-sheet.border-color-selected : NodeUtils.style-sheet.border-color;
+        border-width: active-border-height / 2;
+        width: child.width + active-border-height;
+        height: child.height + active-border-height;
+    }
+
+    child := VerticalLayout {
+        padding-bottom: NodeUtils.style-sheet.bottom-padding;
+
+        // Title
+        Rectangle {
+            width: root.width;
+            height: NodeUtils.style-sheet.header-height;
+            background: NodeUtils.style-sheet.header-background;
+            border-radius: 2px;
+
+            Text {
+                text: root.title;
+                color: white;
+                font-size: NodeUtils.style-sheet.font-size;
+                font-weight: NodeUtils.style-sheet.font-weight;
+                vertical-alignment: center;
+                horizontal-alignment: center;
+            }
+        }
+
+        // Subtitle
+        HorizontalLayout {
+            padding-left: NodeUtils.style-sheet.section-padding;
+            padding-right: NodeUtils.style-sheet.section-padding;
+
+            Rectangle {
+                width: root.width - NodeUtils.style-sheet.section-padding * 2;
+                height: NodeUtils.style-sheet.name-height;
+                clip: true;
+                Text {
+                    text: root.subtitle;
+                    color: NodeUtils.style-sheet.text-color;
+                    font-size: NodeUtils.style-sheet.font-size;
+                    font-weight: NodeUtils.style-sheet.font-weight;
+                    vertical-alignment: center;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+
+        @children
+    }
+}
