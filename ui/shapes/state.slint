@@ -1,0 +1,39 @@
+import { UiDimention, UiSectionItem } from "../types.slint";
+import { NodeUtils, NodeSection, NodeBase } from "./node.slint";
+
+export global StateUtils {
+    public pure function calculate-state-height(state-count: int, event-count: int) -> length {
+        return NodeUtils.calculate-node-height(3, state-count + event-count);
+    }
+
+    public pure function calculate-outcome-y-offset(event-index: int) -> length {
+        return NodeUtils.style-sheet.header-height + 
+                NodeUtils.style-sheet.name-height + 
+                NodeUtils.style-sheet.section-separator-height + 
+                NodeUtils.style-sheet.section-header-height + 
+                ((event-index + 1) * NodeUtils.style-sheet.item-height) - 
+                NodeUtils.style-sheet.item-height / 2;
+    }
+}
+
+export component State inherits NodeBase {
+    in property <string> name;
+    in property <[UiSectionItem]> events;
+    in property <[UiSectionItem]> states;
+
+    title: "State";
+    subtitle: root.name;
+    color: #2537d4;
+
+    NodeSection {
+        width: root.width;
+        header: "Events";
+        items: root.events;
+    }
+
+    NodeSection {
+        width: root.width;
+        header: "States";
+        items: root.states;
+    }
+}

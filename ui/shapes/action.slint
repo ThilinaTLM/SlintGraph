@@ -1,4 +1,4 @@
-import { UiDimention } from "../types.slint";
+import { UiDimention, UiSectionItem } from "../types.slint";
 import { NodeUtils, NodeSection, NodeBase } from "./node.slint";
 
 export global ActionUtils {
@@ -18,9 +18,13 @@ export global ActionUtils {
 
 export component Action inherits NodeBase {
     in property <string> name;
+    in property <[UiSectionItem]> outcomes;
+    in property <[UiSectionItem]> inputs;
+    in property <[UiSectionItem]> outputs;
 
     title: "Action";
     subtitle: root.name;
+    color: #25d434;
 
     NodeSection {
         width: root.width;

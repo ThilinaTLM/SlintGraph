@@ -102,6 +102,10 @@ impl Process {
         
         all_actions
     }
+
+    pub fn get_all_states(&self) -> Vec<&State> {
+        self.states.iter().collect()
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
@@ -165,6 +169,9 @@ impl UiHints {
 
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct MetaData {
+    #[serde(rename = "stateDataTypes", default)]
+    state_data_types: Option<StateDataTypes>,
+
     #[serde(rename = "inputs")]
     inputs: Option<Inputs>,
 
@@ -174,8 +181,8 @@ pub struct MetaData {
     #[serde(rename = "outcomes")]
     outcomes: Option<Outcomes>,
 
-    #[serde(rename = "stateDataTypes", default)]
-    state_data_types: StateDataTypes,
+    #[serde(rename = "handledEvents")]
+    handled_events: Option<HandledEvents>,
 }
 
 impl MetaData {
@@ -213,6 +220,19 @@ impl MetaData {
                     .outcomes
                     .iter()
                     .map(|outcome| outcome.name.clone())
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    pub fn get_state_data_types_as_strings(&self) -> Vec<String> {
+        self.state_data_types
+            .as_ref()
+            .map(|state_data_types| {
+                state_data_types
+                    .state_data_types
+                    .iter()
+                    .map(|state_data_type| state_data_type.name.clone())
                     .collect()
             })
             .unwrap_or_default()
@@ -322,64 +342,55 @@ pub struct OutcomeLink {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct State {
     #[serde(rename = "url")]
-    url: String,
+    pub url: String,
 
     #[serde(rename = "stateID")]
-    state_id: String,
+    pub state_id: String,
 
     #[serde(rename = "name")]
-    name: String,
+    pub name: String,
 
     #[serde(rename = "className")]
-    class_name: String,
+    pub class_name: String,
 
     #[serde(rename = "defaultNextStateID")]
     default_next_state_id: Option<String>,
 
     #[serde(rename = "uiHints")]
-    ui_hints: UiHints,
+    pub ui_hints: UiHints,
 
     #[serde(rename = "metaData")]
-    meta_data: StateMetaData,
+    pub meta_data: MetaData,
 
     #[serde(rename = "typeId")]
-    type_id: String,
+    pub type_id: String,
 
     #[serde(rename = "singleInstance")]
-    single_instance: bool,
+    pub single_instance: bool,
 
     #[serde(rename = "respondToViewEvents")]
-    respond_to_view_events: bool,
+    pub respond_to_view_events: bool,
 
     #[serde(rename = "actionInputMappings")]
-    action_input_mappings: ActionMappings,
+    pub action_input_mappings: ActionMappings,
 
     #[serde(rename = "actionOutputMappings")]
-    action_output_mappings: ActionMappings,
+    pub action_output_mappings: ActionMappings,
 
     #[serde(rename = "eventLink")]
-    event_links: Vec<EventLink>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct StateMetaData {
-    #[serde(rename = "handledEvents")]
-    handled_events: HandledEvents,
-
-    #[serde(rename = "stateDataTypes")]
-    state_data_types: StateDataTypes,
+    pub event_links: Vec<EventLink>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct HandledEvents {
     #[serde(rename = "handledEvent")]
-    events: Vec<HandledEvent>,
+    pub events: Vec<HandledEvent>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct HandledEvent {
     #[serde(rename = "@name")]
-    name: String,
+    pub name: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

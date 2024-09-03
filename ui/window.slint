@@ -1,15 +1,16 @@
 import { ScrollView } from "std-widgets.slint";
 
+import { UiDimention, UiNode, UiLink, UiSectionItem, UiNodeClass } from "./types.slint";
 import { Action, ActionUtils } from "./shapes/action.slint";
-import { MovableRectangle } from "./shapes/movable-rectangle.slint";
+import { State, StateUtils } from "./shapes/state.slint";
 import { SingleSideWrapArrowEdge } from "./edge/edge.slint";
-import { UiDimention, UiNode, UiLink, UiSectionItem } from "./types.slint";
+
 
 export global AppState {
     in-out property <length> viewport-width;
     in-out property <length> viewport-height;
 
-    in-out property <[UiNode]> actions: [];
+    in-out property <[UiNode]> nodes: [];
     in-out property <[UiLink]> links: [];
 
     in-out property <int> selected-index;
@@ -31,23 +32,43 @@ component App {
             background: #e9e9e9;
         }
 
-        for action[i] in AppState.actions: Action {
-            x: action.x;
-            y: action.y;
-            selected: AppState.selected-index == i;
+        for node[i] in AppState.nodes: Rectangle { 
+            if node.class == UiNodeClass.Action: Action {
+                x: node.x;
+                y: node.y;
+                selected: AppState.selected-index == i;
 
-            name: action.id;
-            inputs: action.inputs;
-            outputs: action.outputs;
-            outcomes: action.outcomes;
+                name: node.id;
+                inputs: node.inputs;
+                outputs: node.outputs;
+                outcomes: node.outcomes;
 
-            on-clicked => {
-                AppState.selected-index = i;
+                on-clicked => {
+                    AppState.selected-index = i;
+                }
+
+                on-move => {
+                    AppState.nodes[i].x = self.x;
+                    AppState.nodes[i].y = self.y;
+                }
             }
+            if node.class == UiNodeClass.State: State {
+                x: node.x;
+                y: node.y;
+                selected: AppState.selected-index == i;
 
-            on-move => {
-                AppState.actions[i].x = self.x;
-                AppState.actions[i].y = self.y;
+                name: node.id;
+                events: node.events;
+                states: node.states;
+
+                on-clicked => {
+                    AppState.selected-index = i;
+                }
+
+                on-move => {
+                    AppState.nodes[i].x = self.x;
+                    AppState.nodes[i].y = self.y;
+                }
             }
         }
 
@@ -55,23 +76,23 @@ component App {
             z: 100;
             from-y-offset: ActionUtils.calculate-outcome-y-offset(link.source_outcome_index);
             from: {
-                x: AppState.actions[link.source_index].x,
-                y: AppState.actions[link.source_index].y,
+                x: AppState.nodes[link.source_index].x,
+                y: AppState.nodes[link.source_index].y,
                 width: 200px,
                 height: ActionUtils.calculate-action-height(
-                    AppState.actions[link.source_index].outcomes.length,
-                    AppState.actions[link.source_index].inputs.length,
-                    AppState.actions[link.source_index].outputs.length
+                    AppState.nodes[link.source_index].outcomes.length,
+                    AppState.nodes[link.source_index].inputs.length,
+                    AppState.nodes[link.source_index].outputs.length
                 ),
             };
             to: {
-                x: AppState.actions[link.target_index].x,
-                y: AppState.actions[link.target_index].y,
+                x: AppState.nodes[link.target_index].x,
+                y: AppState.nodes[link.target_index].y,
                 width: 200px,
                 height: ActionUtils.calculate-action-height(
-                    AppState.actions[link.target_index].outcomes.length,
-                    AppState.actions[link.target_index].inputs.length,
-                    AppState.actions[link.target_index].outputs.length
+                    AppState.nodes[link.target_index].outcomes.length,
+                    AppState.nodes[link.target_index].inputs.length,
+                    AppState.nodes[link.target_index].outputs.length
                 ),
             };
         }

@@ -2,18 +2,18 @@ use std::rc::Rc;
 
 use slint::{Color, VecModel};
 
-use crate::{graph::{Graph, Node}, xml_utils::{Action, Process}};
+use crate::xml_utils::{Action, Process};
 
 slint::include_modules!();
 
 pub struct UiProcessAdapter {
     pub process: Process,
-    pub ui_actions: Vec<UiNode>,
+    pub ui_nodes: Vec<UiNode>,
     pub ui_links: Vec<UiLink>,
 }
 
-fn find_ui_action_index_by_id(actions: &Vec<UiNode>, id: &str) -> Option<usize> {
-    actions.iter().enumerate().find_map(|(index, action)| {
+fn find_ui_action_index_by_id(nodes: &Vec<UiNode>, id: &str) -> Option<usize> {
+    nodes.iter().enumerate().find_map(|(index, action)| {
         if action.id == id {
             Some(index)
         } else {
@@ -72,8 +72,40 @@ impl UiProcessAdapter {
                 inputs: inputs_model.into(),
                 outputs: outputs_model.into(),
                 outcomes: outcomes_model.into(),
+                states: Rc::new(VecModel::from(Vec::new())).into(),
+                events: Rc::new(VecModel::from(Vec::new())).into(),
             }
         }).collect();
+
+        let all_states = process.get_all_states();
+        let ui_states: Vec<UiNode> = all_states.iter().map(|state| {
+            let states: Vec<UiSectionItem> = state.meta_data.get_state_data_types_as_strings().into_iter().map(|s| {
+                UiSectionItem {
+                    name: s.clone().into(),
+                    simple_name: get_simple_name(&s).into(),
+                    required: false,
+                    unused: false,
+                }
+            }).collect();
+
+            let ui_states_model = Rc::new(VecModel::from(states));
+
+            UiNode {
+                id: state.state_id.clone().into(),
+                name: state.name.clone().into(),
+                class: UiNodeClass::State,
+                x: state.ui_hints.get_xloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
+                y: state.ui_hints.get_yloc().and_then(|s| s.parse::<f32>().ok()).unwrap_or(0.0),
+                inputs: Rc::new(VecModel::from(Vec::new())).into(),
+                outputs: Rc::new(VecModel::from(Vec::new())).into(),
+                outcomes: Rc::new(VecModel::from(Vec::new())).into(),
+                states: ui_states_model.into(),
+                events: Rc::new(VecModel::from(Vec::new())).into(),
+            }
+
+        }).collect();
+
+        let ui_nodes: Vec<UiNode> = ui_actions.iter().chain(ui_states.iter()).cloned().collect();
 
         let mut ui_links = Vec::new();
         for action in all_actions {
@@ -101,7 +133,7 @@ impl UiProcessAdapter {
 
         Self {
             process,
-            ui_actions,
+            ui_nodes,
             ui_links
         }
     }

@@ -126,10 +126,9 @@ export component NodeBase {
 
     in property <string> title;
     in property <string> subtitle;
-    in property <[UiSectionItem]> outcomes;
-    in property <[UiSectionItem]> inputs;
-    in property <[UiSectionItem]> outputs;
     in property <bool> selected;
+
+    in property <brush> color: NodeUtils.style-sheet.border-color;
 
     width: 200px;
 
@@ -176,7 +175,7 @@ export component NodeBase {
         property <length> active-border-height: root.selected ? NodeUtils.style-sheet.border-height-selected : NodeUtils.style-sheet.border-height;
 
         background: white;
-        border-color: root.selected ? NodeUtils.style-sheet.border-color-selected : NodeUtils.style-sheet.border-color;
+        border-color: root.selected ? NodeUtils.style-sheet.border-color-selected : root.color;
         border-width: active-border-height / 2;
         width: child.width + active-border-height;
         height: child.height + active-border-height;
@@ -189,7 +188,7 @@ export component NodeBase {
         Rectangle {
             width: root.width;
             height: NodeUtils.style-sheet.header-height;
-            background: NodeUtils.style-sheet.header-background;
+            background: root.color;
             border-radius: 2px;
 
             Text {
