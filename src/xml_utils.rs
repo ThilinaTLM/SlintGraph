@@ -237,6 +237,19 @@ impl MetaData {
             })
             .unwrap_or_default()
     }
+
+    pub fn get_handled_events_as_strings(&self) -> Vec<String> {
+        self.handled_events
+            .as_ref()
+            .map(|handled_events| {
+                handled_events
+                    .events
+                    .iter()
+                    .map(|event| event.name.clone())
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
@@ -330,7 +343,7 @@ pub struct OutcomeLink {
     pub to_state_id: Option<String>,
 
     #[serde(rename = "toActionID")]
-    pub to_action_id: String,
+    pub to_action_id: Option<String>,
 
     #[serde(rename = "condition")]
     pub condition: Option<String>,
@@ -456,19 +469,19 @@ pub struct DataType {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct EventLink {
     #[serde(rename = "linkID")]
-    link_id: String,
+    pub link_id: String,
 
     #[serde(rename = "toStateID")]
-    to_state_id: Option<String>,
+    pub to_state_id: Option<String>,
 
     #[serde(rename = "toActionID")]
-    to_action_id: String,
+    pub to_action_id: Option<String>,
 
     #[serde(rename = "condition")]
-    condition: Option<String>,
+    pub condition: Option<String>,
 
     #[serde(rename = "event")]
-    event: String,
+    pub event: String,
 }
 
 #[cfg(test)]
